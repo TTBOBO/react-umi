@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, Icon ,Layout} from 'antd';
 import styles from './index.less';
+import pathToRegexp from 'path-to-regexp';
 import { connect } from 'dva';
 import Link from 'umi/link';
 const SubMenu = Menu.SubMenu;
@@ -11,11 +12,9 @@ class SliderMenu extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            collapsed:false
+            collapsed:false,
+            openKeys:[]
          }
-    }
-    handleClick(e){
-        
     }
 
     getMenuItems = menusData => {
@@ -66,8 +65,69 @@ class SliderMenu extends React.Component {
         return `/${path || ''}`.replace(/\/+/g, '/');
     };
 
+    isMainMenu = key => {
+        const { menuData } = this.props;
+        return menuData.some(item => {
+          if (key) {
+            return item.key === key || item.path === key;
+          }
+          return false;
+        });
+    };
+    onOpenChange = openKeys => {
+        console.log(openKeys)
+        this.setState({
+            openKeys
+        })
+        // const moreThanOne = openKeys.filter(openKey => this.isMainMenu(openKey)).length > 1;
+        // console.log(openKeys,moreThanOne);
+        // this.setState({
+        //   openKeys: moreThanOne ? [openKeys.pop()] : [...openKeys],
+        // },() => {
+        //     console.log(this.state.openKeys);
+        // });
+    }
+
+    urlToList(url) {
+        const urllist = url.split('/').filter(i => i);
+        return urllist.map((urlItem, index) => `/${urllist.slice(0, index + 1).join('/')}`);
+    }
+    getMenuMatches = (flatMenuKeys, path) => {
+        console.log(flatMenuKeys)
+        return flatMenuKeys.filter(item => {
+            if (item) {
+            return pathToRegexp(item).test(path);
+            }
+            return false;
+        })
+    }
+        
+    getSelectedMenuKeys = pathname => {
+        const flatMenuKeys = this.getFlatMenuKeys(this.props.menuData)
+        let data = this.urlToList(pathname).map(itemPath => {
+            return this.getMenuMatches(flatMenuKeys, itemPath).pop()
+        });
+        return data;
+    };
+    getFlatMenuKeys = menuData => {
+        let keys = [];
+        menuData.forEach(item => {
+          keys.push(item.path);
+          if (item.children) {
+            keys = keys.concat(this.getFlatMenuKeys(item.children));
+          }
+        });
+        return keys;
+      };
+    
+
     render() { 
-        const {collapsed,menuData} = this.props;
+        const {collapsed,menuData,openKeys,location:{pathname}} = this.props;
+        // let selectedKeys = this.getSelectedMenuKeys(pathname);
+        // if (!selectedKeys.length && openKeys) {
+        //   selectedKeys = [openKeys[openKeys.length - 1]];
+        // }
+        // const defaultProps = collapsed ? {} : {openKeys}
         return ( 
             <Sider
                 trigger={null}
@@ -81,12 +141,12 @@ class SliderMenu extends React.Component {
             >   
                 <div className={styles.logo} />
                 <Menu
-                    onClick={this.handleClick}
+                    onOpenChange={this.onOpenChange}
                     style={{ width: collapsed ? 80 : 256 }}
-                    defaultSelectedKeys={['1']}
-                    defaultOpenKeys={['sub1']}
+                    selectedKeys={this.state.openKeys}
                     mode="inline"
                     theme="dark"
+                    // {...defaultProps}
                 >
                     {this.getMenuItems(menuData)}
                 </Menu>
