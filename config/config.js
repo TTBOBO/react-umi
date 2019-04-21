@@ -1,6 +1,6 @@
 
 // ref: https://umijs.org/config/
-import routers from './config.router'
+import routers from './config.router';
 export default {
     treeShaking: true,
     plugins: [

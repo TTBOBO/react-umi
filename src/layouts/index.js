@@ -4,8 +4,10 @@ import {connect} from 'dva'
 
 class BasicLayout extends React.Component {
     componentDidMount() {
+       
+    }
+    componentWillMount(){
         const {dispatch,route:{routes,path}} = this.props;
-        console.log(this.props)
         dispatch({
             type:"menu/getMenuData",
             playload:{routes,path}

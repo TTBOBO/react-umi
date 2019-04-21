@@ -16,6 +16,9 @@ function formatter(data, parentAuthority, parentName) {
         }
         // if enableMenuLocale use item.name,
         // close menu international
+        // const name = menu.disableLocal
+        // ? item.name
+        // : formatMessage({ id: locale, defaultMessage: item.name });
         const name = item.name;
         const result = {
           ...item,
@@ -33,6 +36,32 @@ function formatter(data, parentAuthority, parentName) {
       })
       .filter(item => item);
   }
+  /**
+ * get SubMenu or Item
+ */
+const getSubMenu = item => {
+    // doc: add hideChildrenInMenu
+    if (item.children && !item.hideChildrenInMenu && item.children.some(child => child.name)) {
+      return {
+        ...item,
+        children: filterMenuData(item.children), // eslint-disable-line
+      };
+    }
+    return item;
+  };
+  
+  /**
+   * filter menuData
+   */
+  const filterMenuData = menuData => {
+    if (!menuData) {
+      return [];
+    }
+    return menuData
+      .filter(item => item.name && !item.hideInMenu)
+      .map(item => getSubMenu(item))
+      .filter(item => item);
+  };
 export default {
     namespace:"menu",
     state:{
@@ -42,11 +71,11 @@ export default {
         *getMenuData({playload},{put}){
             const { routes, authority, path } = playload;
             const originalMenuData = formatter(routes,authority,path);
-            console.log(originalMenuData,routes)
-            // yield put({
-            //     type:'save',
-            //     playload:{menuData}
-            // })
+            const menuData = filterMenuData(originalMenuData);
+            yield put({
+                type:'save',
+                playload:{menuData}
+            })
         }
     },
     reducers:{

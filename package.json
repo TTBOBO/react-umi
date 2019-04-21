@@ -36,12 +36,5 @@
   },
   "engines": {
     "node": ">=8.0.0"
-  },
-  "checkFiles":[
-    "src/**/*.js*",
-    "src/**/*.ts*",
-    "src/**/*.less",
-    "config/**/*.js*",
-    "scripts/**/*.js"
-  ]
+  }
 }
