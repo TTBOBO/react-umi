@@ -1,8 +1,11 @@
 import React from 'react';
 import { Menu, Icon ,Layout} from 'antd';
+import styles from './index.less';
+import { connect } from 'dva';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 const {Sider} = Layout;
+
 class SliderMenu extends React.Component {
     constructor(props) {
         super(props);
@@ -11,31 +14,36 @@ class SliderMenu extends React.Component {
          }
     }
     handleClick(e){
-        console.log(e);
+        
     }
     render() { 
+        const {collapsed} = this.props;
         return ( 
             <Sider
                 trigger={null}
                 collapsible
                 width={256}
-                
-                collapsed={this.state.collapsed}
-            >
+                collapsed={collapsed}
+                className={styles.slider}
+                style={{
+                    overflow: 'auto', height: '100vh'
+                  }}
+            >   
+                <div className={styles.logo} />
                 <Menu
                     onClick={this.handleClick}
-                    style={{ width: 256 }}
+                    style={{ width: collapsed ? 80 : 256 }}
                     defaultSelectedKeys={['1']}
                     defaultOpenKeys={['sub1']}
                     mode="inline"
                     theme="dark"
                 >
                     <SubMenu key="sub1" title={<span><Icon type="mail" /><span>Navigation One</span></span>}>
-                    <MenuItemGroup key="g1" title="Item 1">
+                    <MenuItemGroup key="g1">
                         <Menu.Item key="1">Option 1</Menu.Item>
                         <Menu.Item key="2">Option 2</Menu.Item>
                     </MenuItemGroup>
-                    <MenuItemGroup key="g2" title="Item 2">
+                    <MenuItemGroup key="g2">
                         <Menu.Item key="3">Option 3</Menu.Item>
                         <Menu.Item key="4">Option 4</Menu.Item>
                     </MenuItemGroup>
@@ -59,5 +67,8 @@ class SliderMenu extends React.Component {
          );
     }
 }
- 
-export default SliderMenu;
+export default connect(({global}) => ({
+    collapsed:global.collapsed
+}))(props => (
+    <SliderMenu {...props} />
+));

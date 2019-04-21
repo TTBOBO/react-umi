@@ -23,6 +23,9 @@ export default {
         },
       }],
     ],
-    routes:routers
+    routes:routers,
+    lessLoaderOptions: {
+      javascriptEnabled: true,
+    }
   }
   

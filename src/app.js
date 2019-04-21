@@ -1,7 +1,6 @@
 
 import router from 'umi/router';
 import RoutersArr from '../config/config.router';
-console.log(RoutersArr)
 export const dva = {
   config: {
     onError(err) {

@@ -1,4 +1,3 @@
-import styles from '../index.css';
 import Link from 'umi/link';
 
 export default function(props) {

@@ -1,9 +1,12 @@
-import React, { Suspense ,createContext } from 'react';
+import React, { createContext } from 'react';
 import { Layout } from 'antd';
 import SliderMenu from './SliderMenu'
 import Footer from './Footer'
+import Header from './Header'
 import styles from './index.css';
-const { Content,Header,Sider } = Layout;
+import { connect } from 'dva';
+
+const { Content } = Layout;
 const Context = createContext();
 class BaseLayout  extends React.Component {
     componentDidMount() {
@@ -14,6 +17,14 @@ class BaseLayout  extends React.Component {
         return {
             localtion
         }
+    }
+    changeCollapsed(collapsed){
+        // console.log(collapsed)
+        const {dispatch} = this.props;
+        dispatch({
+            type:"global/changeLayoutCollapsed",
+            playload:collapsed
+        })
     }
     // const layout = 
     render() { 
@@ -26,7 +37,7 @@ class BaseLayout  extends React.Component {
                     <Layout className={styles.section}>
                         <SliderMenu />
                         <Layout>
-                            <Header></Header>
+                            <Header onCollapsed={this.changeCollapsed.bind(this)}></Header>
                             <Content>
                                 {children}
                             </Content>
@@ -38,5 +49,8 @@ class BaseLayout  extends React.Component {
          );
     }
 }
- 
-export default BaseLayout;
+
+
+export default connect(() => (({})))(props => (
+    <BaseLayout {...props} />
+));
