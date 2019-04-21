@@ -1,7 +1,6 @@
 import React from 'react';
-import { Layout } from 'antd';
 import { connect } from 'dva';
-import { Icon } from 'antd';
+import { Icon,Avatar,Layout,Menu, Dropdown } from 'antd';
 import styles from './index.less'
 const {Header} = Layout;
 class BaseHeader extends React.Component {
@@ -17,11 +16,31 @@ class BaseHeader extends React.Component {
         const {collapsed,onCollapsed} = this.props;
         onCollapsed(!collapsed);
     }
+    setMenu(){
+        return (<Menu>
+            <Menu.Item>
+              个人中心
+            </Menu.Item>
+            <Menu.Item>
+              退出登录
+            </Menu.Item>
+          </Menu>)
+    }
     render() { 
         const {collapsed} = this.props;
         return ( 
             <Header className={styles.header}>
-                <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} onClick={() => this.onCollapsed()} />
+                <div className={styles.content}>
+                    <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} onClick={() => this.onCollapsed()} />
+                    <div>
+                        <Dropdown overlay={this.setMenu()} placement="bottomLeft">
+                            <div className={styles.userCon}>
+                                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                                <span className={styles.username}>普通用户</span>
+                            </div>
+                        </Dropdown>
+                    </div>
+                </div>
             </Header>
         );
     }

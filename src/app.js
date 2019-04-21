@@ -15,6 +15,7 @@ export function onRouteChange({ location, routes }){
     if(routesArr.indexOf(location.pathname) === -1){
         router.replace('/404');
     }
+    return {};
 }
 
 

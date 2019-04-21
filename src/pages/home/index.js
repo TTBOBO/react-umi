@@ -38,7 +38,7 @@ class BaseLayout  extends React.Component {
                         <SliderMenu {...this.props}/>
                         <Layout>
                             <Header onCollapsed={this.changeCollapsed.bind(this)}></Header>
-                            <Content>
+                            <Content className={styles.contentModal}>
                                 {children}
                             </Content>
                             <Footer/>

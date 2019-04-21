@@ -74,11 +74,11 @@ class SliderMenu extends React.Component {
           return false;
         });
     };
-    onOpenChange = openKeys => {
-        console.log(openKeys)
-        this.setState({
-            openKeys
-        })
+    onOpenChange = () => {
+        // console.log(openKeys)
+        // this.setState({
+        //     openKeys:[openKeys.pop()]
+        // })
         // const moreThanOne = openKeys.filter(openKey => this.isMainMenu(openKey)).length > 1;
         // console.log(openKeys,moreThanOne);
         // this.setState({
@@ -93,7 +93,6 @@ class SliderMenu extends React.Component {
         return urllist.map((urlItem, index) => `/${urllist.slice(0, index + 1).join('/')}`);
     }
     getMenuMatches = (flatMenuKeys, path) => {
-        console.log(flatMenuKeys)
         return flatMenuKeys.filter(item => {
             if (item) {
             return pathToRegexp(item).test(path);
@@ -122,7 +121,7 @@ class SliderMenu extends React.Component {
     
 
     render() { 
-        const {collapsed,menuData,openKeys,location:{pathname}} = this.props;
+        const {collapsed,menuData,location:{}} = this.props;
         // let selectedKeys = this.getSelectedMenuKeys(pathname);
         // if (!selectedKeys.length && openKeys) {
         //   selectedKeys = [openKeys[openKeys.length - 1]];
@@ -143,7 +142,6 @@ class SliderMenu extends React.Component {
                 <Menu
                     onOpenChange={this.onOpenChange}
                     style={{ width: collapsed ? 80 : 256 }}
-                    selectedKeys={this.state.openKeys}
                     mode="inline"
                     theme="dark"
                     // {...defaultProps}
