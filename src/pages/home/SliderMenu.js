@@ -2,8 +2,9 @@ import React from 'react';
 import { Menu, Icon ,Layout} from 'antd';
 import styles from './index.less';
 import { connect } from 'dva';
+import Link from 'umi/link';
 const SubMenu = Menu.SubMenu;
-const MenuItemGroup = Menu.ItemGroup;
+// const MenuItemGroup = Menu.ItemGroup;
 const {Sider} = Layout;
 
 class SliderMenu extends React.Component {
@@ -16,9 +17,57 @@ class SliderMenu extends React.Component {
     handleClick(e){
         
     }
+
+    getMenuItems = menusData => {
+        if(!menusData) return [];
+        return menusData.filter(item => item.name && !item.hideInMenu)
+                .map(item => this.getSubMenuItems(item))
+    }
+
+    getSubMenuItems = item => {
+        if(item.children && !item.hideChildrenInMenu && item.children.some(child => child.name)){
+            const {name} = item;
+            return  (<SubMenu key={item.path} title={<span><Icon type={item.icon || 'bar-chart'} /><span>{name}</span></span>}>
+                {this.getMenuItems(item.children)}
+            </SubMenu>)
+        }
+        return (<Menu.Item key={item.path}>{this.getMenuItem(item)}</Menu.Item>)
+    }
+
+    getMenuItem = item =>  {
+        const {name} = item;
+        const itemPath = this.conversionPath(item.path);
+        const { target } = item; //url地址target类型
+        if (/^https?:\/\//.test(itemPath)) {
+            return (
+                <a href={itemPath} target={target}>
+                <Icon type={item.icon || 'bar-chart'} />
+                <span>{name}</span>
+                </a>
+            );
+        }
+        const {location} = this.props;
+        return (
+            <Link
+              to={itemPath}
+              target={target}
+              replace={itemPath === location.pathname}
+            >
+              <Icon type={item.icon || 'bar-chart'} />
+              <span>{name}</span>
+            </Link>
+        );
+    }
+
+    conversionPath = path => {
+        if (path && path.indexOf('http') === 0) {
+            return path;
+        }
+        return `/${path || ''}`.replace(/\/+/g, '/');
+    };
+
     render() { 
         const {collapsed,menuData} = this.props;
-        console.log(menuData)
         return ( 
             <Sider
                 trigger={null}
@@ -39,20 +88,7 @@ class SliderMenu extends React.Component {
                     mode="inline"
                     theme="dark"
                 >
-                    <SubMenu key="sub2" title={<span><Icon type="appstore" /><span>Navigation Two</span></span>}>
-                    <Menu.Item key="5">Option 5</Menu.Item>
-                    <Menu.Item key="6">Option 6</Menu.Item>
-                    <SubMenu key="sub3" title="Submenu">
-                        <Menu.Item key="7">Option 7</Menu.Item>
-                        <Menu.Item key="8">Option 8</Menu.Item>
-                    </SubMenu>
-                    </SubMenu>
-                    <SubMenu key="sub4" title={<span><Icon type="setting" /><span>Navigation Three</span></span>}>
-                    <Menu.Item key="9">Option 9</Menu.Item>
-                    <Menu.Item key="10">Option 10</Menu.Item>
-                    <Menu.Item key="11">Option 11</Menu.Item>
-                    <Menu.Item key="12">Option 12</Menu.Item>
-                    </SubMenu>
+                    {this.getMenuItems(menuData)}
                 </Menu>
             </Sider>
          );

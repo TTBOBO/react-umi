@@ -35,7 +35,7 @@ class BaseLayout  extends React.Component {
             <React.Fragment>
                 <Context.Provider value={this.getConText()}>
                     <Layout className={styles.section}>
-                        <SliderMenu />
+                        <SliderMenu {...this.props}/>
                         <Layout>
                             <Header onCollapsed={this.changeCollapsed.bind(this)}></Header>
                             <Content>
