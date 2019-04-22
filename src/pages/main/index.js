@@ -27,16 +27,20 @@ export default class index extends Component {
                 selection:{},
                 rowKey:"age",
                 columns:[
-                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left"},
+                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",children:[
+                        
+                    ]},
                     {title: '年龄',prop: 'age'},
-                    {title: '住址',prop: 'address'}
-                ]
+                        {title: '住址',prop: 'address'}
+                    
+                ],
+                toolEvent:[{title:"添加",type:"primary",disabled:false,onClick:(record)=>{console.log(record);}}]
             }
         })
     }
     render() {
         return (
-            <div>
+            <div style={{width:'900px'}}>
                 <CustomTable optionData={this.state.optionData}/>
             </div>
         )
