@@ -9,8 +9,7 @@ export default class Customtable extends Component {
     getSelection(selectionPar){
         return {
             columnWidth:selectionPar.width || 60,
-            columnTitle:"",
-            fixed:selectionPar.fixed || "left",
+            fixed:false,
             onChange:this.selectionChange.bind(this),
             type:selectionPar.type || "checkbox"
         };
@@ -51,7 +50,6 @@ export default class Customtable extends Component {
     }
     getExpand = (record, index, indent, expanded) => {
         console.log(record, index, indent, expanded);
-        return (<p>1356464646465465464654</p>)
         const {optionData} = this.props; 
         const columns = [{
             title: 'Name',
@@ -85,7 +83,7 @@ export default class Customtable extends Component {
     }
     render() {
         const {optionData} = this.props; 
-        const selsctionStatus = {} ||  optionData.selection ? this.getSelection(optionData.selection) : null;
+        const selsctionStatus = ( optionData.selection ? this.getSelection(optionData.selection) : null);
         const dataSource = [{
             // key: '1',
             name: '胡彦斌',
@@ -105,7 +103,7 @@ export default class Customtable extends Component {
         
         return (
             <div className={styles.tableContainer}>
-                <Table dataSource={dataSource} rowKey={optionData.rowKey} expandedRowRender={this.getExpand.bind(this)}  bordered={false} size={optionData.size || 'small'} rowSelection={selsctionStatus}
+                <Table dataSource={dataSource} rowKey={optionData.rowKey} pagination={false} expandedRowRender={this.getExpand.bind(this)}  bordered={false} size={optionData.size || 'small'} rowSelection={selsctionStatus}
                     showHeader={optionData.showHeader || true}
                     // scroll={{ x: '110%', y: 240 }}
                 >
