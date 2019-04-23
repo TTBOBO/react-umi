@@ -1,7 +1,11 @@
 import React from 'react';
 import styles from './index.css';
 import {connect} from 'dva'
-
+import { LocaleProvider } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 class BasicLayout extends React.Component {
     componentDidMount() {
        
@@ -16,9 +20,11 @@ class BasicLayout extends React.Component {
 
     render(){
         return (
-            <div className={styles.container}>
-                {this.props.children}
-            </div>
+            <LocaleProvider locale={zh_CN}>
+                <div className={styles.container}>
+                    {this.props.children}
+                </div>
+            </LocaleProvider>
         )
     };
 }

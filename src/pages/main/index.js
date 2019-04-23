@@ -25,23 +25,36 @@ export default class index extends Component {
         this.setState({
             optionData:{
                 selection:{},
-                rowKey:"age",
+                // expanded:true,
+                // hidePage:true,
+                rowKey:"key",
+                scroll:{x:1000},
+                search: {
+                    page: 1,  //页数
+                    size: 10,  //每页多少条
+                },
                 columns:[
                     {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",children:[
-                        
-                    ]},
-                    {title: '年龄',prop: 'age'},
+                        {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend'},
                         {title: '住址',prop: 'address'}
-                    
+                    ]},
+                    {title: '性别',prop: 'sex',width:300},
+                    {title: 'lev',prop: 'lev'},
                 ],
-                toolEvent:[{title:"添加",type:"primary",disabled:false,onClick:(record)=>{console.log(record);}}]
+                toolEvent:[{title:"添加",type:"primary",disabled:false,onClick:(record)=>{console.log(record);}}],  //,judgement_con:"data.key == '1'"
+                topBtnGroup: [
+                    { name: "查看任务配置", type: "primary", emit:"viewTask", icon: "plus", hasSel: 0, hasMore: ''},
+                    { name: "复制任务配置", type: "primary", emit:"cloneTask", icon: "plus", hasSel: 1, hasMore: "",noloading:true },
+                    { name: "批量终止", type: "danger", emit:"pldel", icon: "plus", hasSel: 1, hasMore: 'more'},
+                ]
             }
         })
     }
     render() {
         return (
-            <div style={{width:'900px'}}>
-                <CustomTable optionData={this.state.optionData}/>
+            // style={{width:'900px'}}
+            <div >
+                <CustomTable optionData={this.state.optionData} RenderExpand={(params) => {console.log(params)}}/>
             </div>
         )
     }

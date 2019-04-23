@@ -3,34 +3,74 @@ import {Table,Button} from 'antd';
 import styles from './index.less'
 const { Column, ColumnGroup } = Table;
 export default class Customtable extends Component {
-    selectionChange(selectedRowKeys,selectedRows){
+    state = {
+        current:1,
+        pageSize:10,
+        total:50,
+        topBtnGroup:[],  //顶部按钮组
+        selectItem:[]  //选中的地址
+    }
+    componentWillMount(){
+        const {optionData:{search:{page,size}}} = this.props;
+        const {current,pageSize} = this.state;
+        this.setState({
+            current:page || current,
+            pageSize:size || pageSize,
+            topBtnGroup:this.props.optionData.topBtnGroup.map((item) =>{
+                item.disabled = this.getDisStatus(item);
+                return item
+            })
+        })
+    }
+    async selectionChange(selectedRowKeys,selectedRows){
+        await this.setState({selectItem:selectedRowKeys});
+        this.setState({
+            topBtnGroup:this.state.topBtnGroup.map((item,index) => {
+                if(!item.hasSel)
+                    return item;
+                item.disabled = this.getDisStatus(item);
+                return item
+            })
+        })
         this.props.selectionChange && this.props.selectionChange({selectedRowKeys,selectedRows})
+    }
+    getDisStatus(item){
+        const {selectItem} = this.state;
+        let res = false;
+        if(item.hasSel && item.hasMore === 'more'){  //选中数 大于等于 item.hasSel
+            res = selectItem.length >= item.hasSel  ? false : true;
+        }else if(item.hasSel && !item.hasMore){   //选中数 等于 item.hasSel
+            res = item.hasSel === selectItem.length ? false : true;
+        }else if(item.hasSel && item.hasMore === 'less'){ //选中数 小于等于 item.hasSel
+            res = selectItem.length <= item.hasSel && selectItem.length > 0  ? false : true;
+        }
+        return res;
     }
     getSelection(selectionPar){
         return {
             columnWidth:selectionPar.width || 60,
             fixed:false,
-            onChange:this.selectionChange.bind(this),
+            onChange:this.selectionChange.bind(this),  //选择框选择回调
             type:selectionPar.type || "checkbox"
         };
     }
-    getColumn(columnList){
+    getColumn(columnList = []){
         return (
             columnList.map((item,index) => {
                 const renderHtml = (item.children && item.children.length) ? (<ColumnGroup key={item.title} title={item.title}>{this.getColumn(item.children)}</ColumnGroup>) :
                     <Column 
-                    title={item.title} 
-                    align={item.align || 'center'} 
-                    className={item.className}
-                    dataIndex={item.prop} 
-                    key={item.prop}
-                    sorter={item.sort}
-                    fixed={item.fixed || false}
-                    defaultSortOrder={item.sort || 'ascend'}
-                    render={item.render} 
-                    width={item.width}
-
-                />
+                        title={item.title} 
+                        align={item.align || 'center'} 
+                        className={item.className}
+                        dataIndex={item.prop} 
+                        key={item.prop}
+                        sorter={item.sort}
+                        defaultSortOrder={item.defaultSortOrder}
+                        fixed={item.fixed || false}
+                        sort={item.sort}
+                        render={item.render} 
+                        width={item.width}
+                    />
                 return (renderHtml)
             })
         )
@@ -43,74 +83,131 @@ export default class Customtable extends Component {
         return (
             optionData.toolEvent.map((item,index) => {
                 return (
-                    <Button disabled={item.disabled} onClick={item.onClick && item.onClick.bind(this,record)} key={'btn_'+index} size="small" type={item.type}>{item.title}</Button>
+                    <Button disabled={this.getBtnStatus(record,item)} onClick={item.onClick && item.onClick.bind(this,record)} key={'btn_'+index} size="small" type={item.type}>
+                         {item.handStatus ? (item.handStatus.title[record[item.handStatus.obj]] || item.title) : item.title }
+                    </Button>
                 )
             })
         )
     }
+    getBtnStatus(data,item){
+        return item.judgement_con ? eval(item.judgement_con) : false;
+    }
     getExpand = (record, index, indent, expanded) => {
-        console.log(record, index, indent, expanded);
-        const {optionData} = this.props; 
-        const columns = [{
-            title: 'Name',
-            dataIndex: 'name',
-          }, {
-            title: 'Age',
-            dataIndex: 'age',
-          }, {
-            title: 'Address',
-            dataIndex: 'address',
-          }];
-        const dataSource = [{
-            key: '11',
-            name: '胡彦斌',
-            age: 32,
-            address: '西湖区湖底公园1号'
-          }, {
-            key: '22',
-            name: '胡彦祖',
-            age: 42,
-            address: '西湖区湖底公园1号'
-          }, {
-            key: '33',
-            name: '胡彦祖',
-            age: 43,
-            address: '西湖区湖底公园1号'
-          }];
-          return (
-            <Table columns={columns} dataSource={dataSource} size="middle" />
-          )
+        const {RenderExpand} = this.props; 
+          return (<div style={{padding:'5px'}}>
+                {RenderExpand && RenderExpand({record, index, indent, expanded})}
+           </div>)
+    }
+    getPagination() {
+        const { optionData } = this.props;
+        const {current,total,pageSize} = this.state;
+        return optionData.hidePage ? false : {
+            current,
+            defaultCurrent:1,
+            pageSize,
+            showSizeChanger:true,
+            total,
+            showQuickJumper:true,
+            onChange:this.changePageAndPageSize.bind(this),
+            onShowSizeChange:this.changePageAndPageSize.bind(this),
+            showTotal:() => {
+                return ("共"+total+"条")
+            }
+        }
+    }
+    getTopBtn(){
+        return (
+            this.state.topBtnGroup.map((item,index) => {
+                return (
+                    <Button disabled={item.disabled}  className={styles.btn} type={item.type || "primary"} key={index} onClick={item.onClick && item.onClick({item,index})}>
+                       {item.name}
+                    </Button>
+                )
+            })
+        )
+    }
+    changePageAndPageSize(current, pageSize){
+        this.setState({pageSize,current})
+    }
+    changeTable(pagination,filters,sorter){
+        console.log(pagination,filters,sorter)
+    }
+    reloadTable(){
+        
     }
     render() {
         const {optionData} = this.props; 
         const selsctionStatus = ( optionData.selection ? this.getSelection(optionData.selection) : null);
-        const dataSource = [{
-            // key: '1',
-            name: '胡彦斌',
-            age: 32,
-            address: '西湖区湖底公园1号'
-          }, {
-            // key: '2',
-            name: '胡彦祖',
-            age: 42,
-            address: '西湖区湖底公园1号'
-          }, {
-            // key: '2',
-            name: '胡彦祖',
-            age: 43,
-            address: '西湖区湖底公园1号'
-          }];
-        
+        const dataSource = [
+            {
+                key: 1,
+                name: 'John Brown sr.',
+                age: 60,
+                address: 'New York No. 1 Lake Park',
+                children: [{
+                  key: 11,
+                  name: 'John Brown',
+                  age: 42,
+                  address: 'New York No. 2 Lake Park',
+                }, {
+                  key: 12,
+                  name: 'John Brown jr.',
+                  age: 30,
+                  address: 'New York No. 3 Lake Park',
+                  children: [{
+                    key: 121,
+                    name: 'Jimmy Brown',
+                    age: 16,
+                    address: 'New York No. 3 Lake Park',
+                  }],
+                }, {
+                  key: 13,
+                  name: 'Jim Green sr.',
+                  age: 72,
+                  address: 'London No. 1 Lake Park',
+                  children: [{
+                    key: 131,
+                    name: 'Jim Green',
+                    age: 42,
+                    address: 'London No. 2 Lake Park',
+                    children: [{
+                      key: 1311,
+                      name: 'Jim Green jr.',
+                      age: 25,
+                      address: 'London No. 3 Lake Park',
+                    }, {
+                      key: 1312,
+                      name: 'Jimmy Green sr.',
+                      age: 18,
+                      address: 'London No. 4 Lake Park',
+                    }],
+                  }],
+                }],
+              }, {
+                key: 2,
+                name: 'Joe Black',
+                age: 32,
+                address: 'Sidney No. 1 Lake Park',
+              }
+        ];
         return (
             <div className={styles.tableContainer}>
-                <Table dataSource={dataSource} rowKey={optionData.rowKey} pagination={false} expandedRowRender={this.getExpand.bind(this)}  bordered={false} size={optionData.size || 'small'} rowSelection={selsctionStatus}
-                    showHeader={optionData.showHeader || true}
-                    // scroll={{ x: '110%', y: 240 }}
-                >
-                    {this.getColumn(optionData.columns)}
-                    {optionData.toolEvent && <Column align="center" title="操作" key="action" render={this.getToolColumn.bind(this)} >
-                    </Column>}
-                </Table>
+                {   
+                    <div>
+                        <div className={styles.tabbelTopBtn}>{this.getTopBtn()}</div>
+                        <Table dataSource={dataSource} onChange={this.changeTable.bind(this)} rowKey={optionData.rowKey} pagination={this.getPagination()}  expandedRowRender={optionData.expanded ? this.getExpand.bind(this) : null}  bordered={true} size={optionData.size || 'small'} rowSelection={selsctionStatus}
+                            showHeader={optionData.showHeader || true}
+                            locale={{emptyText:"暂无数据"}}
+                            scroll={optionData.scroll || {}}
+                        >
+                            {this.getColumn(optionData.columns)}
+                            {optionData.toolEvent && <Column align="center" title="操作" width={optionData.toolEventWidth || 100} key="action" render={this.getToolColumn.bind(this)} >
+                            </Column>}
+                        </Table>
+                    </div>
+                     
+                }
             </div>
         )
     }
