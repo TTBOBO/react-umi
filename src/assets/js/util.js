@@ -357,6 +357,20 @@ let util = {
             })
         })
     },
+    getFormSelectOpt(data = {}) {
+        let optArr = [];
+        if(!Array.isArray(data)){
+            for (var i in data) {
+                optArr.push({
+                    value: i,// == 'true' ? true : (i == 'false' ? false : i)
+                    label: data[i]
+                });
+            }
+            return optArr;
+        }else{
+            return data;
+        }
+    },
 	initValidate(option) {
 		var obj = {};
 		var validateNum = "";
@@ -404,6 +418,7 @@ let util = {
 				];
 			} else if (item.validate == "required") {
 				if ( !item.multiple && item.type != "upload" && item.type != "checkbox" ) {
+                    let inputType = ['input','password','textarea'];
 					//单选下拉是字符串
 					validateNum  = (rule, value, callback) => {
 						if (value === undefined || value === null || value === '' ) {
@@ -415,7 +430,7 @@ let util = {
 					obj[item.field] = [{
 							required: true,
                             validator: validateNum,
-							message: item.msg || ((item.type === 'input' || item.type === 'password' || !item.type) ? "请填写" : "请选择")+item.label,
+							message: item.msg || (inputType.indexOf(item.type) !== -1 ? "请填写" : "请选择")+item.label,
 							trigger: item.blur || item.type === 'select' || item.type === 'checkbox' ? "change" : "blur"
 						}
 					];

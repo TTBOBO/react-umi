@@ -1,22 +1,38 @@
-import React, { Component } from 'react'
-import { Form, Input, Button } from 'antd';
-import util from '@/assets/js/util.js'
+import React, { Component } from 'react';
+import { Form, Input, Tooltip, Icon, Button ,InputNumber , Select } from 'antd';
+import util from '@/assets/js/util.js';
+const Option = Select.Option;
 class CustomForm extends Component {
     state = {
-        validata:{}
+        validata:{},
+        selectData:{}
     }
     componentDidMount() {}
-    componentWillMount(){
-        this.initvalidata();
+    async componentWillMount(){
+        await this.initvalidata();
     }
-    initvalidata(){
+    async initvalidata(){
         const {formList = [],validata = {}} = this.props.formOption;
         this.setState({
             validata:util.initValidate({
                 valideDate:formList,
                 CustomValidata:validata
-            })
+            }),
+            selectData:await this.getSelectOption(formList)
+        },() => {
+            // console.log(this.state.selectData)
         });
+        
+    }
+
+    async getSelectOption(formList = []){
+        let selectData = {};
+        formList.forEach((item,index) => {
+            if(item.type === 'select' && !item.optionUrl){
+                selectData[item.field] = util.getFormSelectOpt(item.selectOption)
+            }
+        })
+        return selectData || [];
     }
     async handleSubmit(e) {
         e.preventDefault();
@@ -59,8 +75,49 @@ class CustomForm extends Component {
         })
     }
 
-    getFormItemCon(item){
-        return (<Input prefix={item.icon || ""} placeholder={item.pla} />)
+    getFormItemCon(item = {}){
+        
+        let itemDom = null;
+        let inputType = ['input','password','textarea'];
+        if(inputType.indexOf(item.type) != -1 || !item.type){
+            return (<Input prefix={item.icon || ""} placeholder={item.allPla || (item.pla || `请输入${item.label}`)} disabled={item.disable} allowClear  suffix={this.getSuffix(item.suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />)
+        }else if(item.type === 'number'){
+            return ( <InputNumber formatter={item.formatter} disabled={item.disable} parser={item.parser} />)
+        }else if(item.type === 'select'){
+            const {selectData} = this.state;
+            return (
+                <Select style={{ width: 120 }} showArrow notFoundContent={item.neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={item.disable} mode={item.mode || ''} placeholder={item.allPla || (item.pla || `请选择${item.label}`)}>
+                   {selectData[item.field] && selectData[item.field].map(item => <Option key={item.value} value={item.value}>{item.label}</Option>)}
+                </Select>
+            )
+        }
+    }
+    
+    filterOption(input,option){
+        return option.props.value === input || option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    }
+
+    getBefore(item){
+        const {addonBefore} = item;
+        if(!addonBefore) return null;
+        return (
+            typeof addonBefore === 'string' ? addonBefore : addonBefore
+          )
+    }
+    getAfter(item){
+        const {addonAfter} = item;
+        if(!addonAfter) return null;
+        return (
+            typeof addonAfter === 'string' ? addonAfter : addonAfter
+          )
+    }
+    getSuffix(suffix){
+        if(!suffix) return null;
+        return (
+            typeof suffix === 'string' ? <Tooltip title={suffix}>
+                <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
+            </Tooltip> : suffix
+          )
     }
 
     render() {
@@ -89,6 +146,6 @@ export default  Form.create({
         // console.log(fields)
     },
     onValuesChange(_,values){
-        // console.log(values)
+        console.log(values)
     }
 })(CustomForm);;
