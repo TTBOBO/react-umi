@@ -14,7 +14,8 @@ export default [
         routes:[
             { path: '/', redirect:"/home/info"},//
             { path: '/home',name:"home",component:"./home/index.js" ,routes:[
-                { path:"/home/info",name:"info", component: './main/index.js'}
+                { path:"/home/info",name:"info", component: './main/index.js'},
+                { path:"/home/form",name:"form", component: './main/form.js'}
             ]},
             { path: '/home1',name:"home1",component:"./home/index.js" ,routes:[  //,hideInMenu:true
                 { path:"/home1/405",name:"405", component: './login/index.js'}
