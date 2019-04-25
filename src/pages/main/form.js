@@ -8,7 +8,11 @@ class Form extends Component {
             formList:[
                 {label:"用户名",type:"number",value:"11",field:"username",render:false,addonBefore:"测试",suffix:"tip"},
                 {label:"密码",type:"password",value:"222",field:"password" ,validate: "required"},
-                {label:"时间范围",type:"select",value:'',field:"time" ,validate: "required",selectOption: {desc:"最新",asc:"最旧"}}
+                {label:"城市",type:"select",mode:"multiple",group:true,value:['desc'],field:"city" ,validate: "required",selectOption: {desc:"深圳",asc:"南昌"}},
+                {label:"爱好",type:"checkbox",group:true,value:['desc'],field:"time" ,validate: "required",selectOption: {desc:"泡妞",asc:"唱歌"}},
+                {label:"性别",type:"radio",group:true,value:'asc',field:"sex" ,validate: "required",selectOption: {desc:"男",asc:"女"}},
+                {label:"打开状态",type:"switch",value:true,field:"status" ,validate: "required"},
+                {label:"时间",type:"date",dateType:"range",value:['2018-4-25','2018-4-26'],field:"timestate" ,validate: "required",showTime:true,format:"YYYY/MM/DD",disabled:false}
             ],
             labelCol:6
         }

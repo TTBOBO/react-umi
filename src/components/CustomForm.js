@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Input, Tooltip, Icon, Button ,InputNumber , Select } from 'antd';
+import { Form, Input, Tooltip, Icon, Button ,InputNumber, Select, Radio, Checkbox, Switch, DatePicker} from 'antd';
 import util from '@/assets/js/util.js';
-const Option = Select.Option;
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+// moment.locale('zh-cn');
 class CustomForm extends Component {
     state = {
         validata:{},
@@ -27,8 +29,9 @@ class CustomForm extends Component {
 
     async getSelectOption(formList = []){
         let selectData = {};
+        let selectTypes = ['select','radio','checkbox'];
         formList.forEach((item,index) => {
-            if(item.type === 'select' && !item.optionUrl){
+            if((selectTypes.indexOf(item.type) != -1) && !item.optionUrl){
                 selectData[item.field] = util.getFormSelectOpt(item.selectOption)
             }
         })
@@ -58,16 +61,17 @@ class CustomForm extends Component {
         const {formList = [],labelCol} = this.props.formOption;
         const { getFieldDecorator, getFieldsError, getFieldError, isFieldTouched } = this.props.form;
         return formList.map((item,index) => {
+            let obj = {};
+            obj.rules = this.getItemRule(item.field)
+            if(item.type === 'switch')  obj.valuePropName = 'checked';
+            obj.initialValue = (item.type === 'date' ? util.getDateMoment(item,moment) : item.value)
             return (
                 <Form.Item
                     key={'item_'+index}
                     label={item.label}
                     {...this.getLabelConLayout(labelCol)}
                 >
-                    {getFieldDecorator(item.field, {
-                        initialValue:item.value || '',
-                        rules: this.getItemRule(item.field),
-                    })(
+                    {getFieldDecorator(item.field, obj)(
                         item.render ? (item.render) : this.getFormItemCon(item)
                     )}
                 </Form.Item>
@@ -76,20 +80,65 @@ class CustomForm extends Component {
     }
 
     getFormItemCon(item = {}){
-        
-        let itemDom = null;
-        let inputType = ['input','password','textarea'];
-        if(inputType.indexOf(item.type) != -1 || !item.type){
+        let inputTypes = ['input','password','textarea'];
+        if(inputTypes.indexOf(item.type) != -1 || !item.type){
             return (<Input prefix={item.icon || ""} placeholder={item.allPla || (item.pla || `请输入${item.label}`)} disabled={item.disable} allowClear  suffix={this.getSuffix(item.suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />)
         }else if(item.type === 'number'){
             return ( <InputNumber formatter={item.formatter} disabled={item.disable} parser={item.parser} />)
         }else if(item.type === 'select'){
             const {selectData} = this.state;
+            const Option = Select.Option;
             return (
                 <Select style={{ width: 120 }} showArrow notFoundContent={item.neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={item.disable} mode={item.mode || ''} placeholder={item.allPla || (item.pla || `请选择${item.label}`)}>
                    {selectData[item.field] && selectData[item.field].map(item => <Option key={item.value} value={item.value}>{item.label}</Option>)}
                 </Select>
             )
+        }else if(item.type === 'radio'){
+            const {selectData} = this.state;
+            const RadioGroup = Radio.Group;
+            return (
+                selectData[item.field] ? (item.group ? <RadioGroup>
+                    {selectData[item.field].map(item => <Radio  key={item.value} value={item.value}>{item.label}</Radio>)}
+                </RadioGroup> : <Radio disabled={item.disabled}>{selectData[item.field][0].label}</Radio>) : <span></span>
+            )
+        }else if(item.type === 'checkbox'){
+            const CheckboxGroup = Checkbox.Group
+            const {selectData} = this.state;
+            return (
+                selectData[item.field] ?  (item.group ? <CheckboxGroup options={ selectData[item.field]} /> :  <Checkbox  disabled={item.disabled}>{selectData[item.field][0].label} </Checkbox>) : <span></span>
+            )
+        }else if(item.type === 'switch'){
+            return ( <Switch checkedChildren={item.checkText || "开"} unCheckedChildren={item.uncheckText || "关"} />)
+        }else if(item.type === 'date'){
+            const DateType = item.dateType || 'date';
+            let DateCom = null;
+            const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
+            let obj = {
+                placeholder:item.allPla || (item.pla || `请选择${item.label}`),
+                size:item.size || 'small',
+                disabled:item.disabled || false,
+                showTime:item.showTime || false,
+                format:item.format || null
+            }
+            console.log(DateType)
+            switch (DateType){
+                case 'date': 
+                    DateCom = <DatePicker {...obj} />;
+                    break;
+                case 'month': 
+                    DateCom = <MonthPicker  />;
+                    break;
+                case 'range': 
+                    DateCom = <RangePicker  />;
+                    break;
+                case 'week': 
+                    DateCom = <WeekPicker  />;
+                    break;
+                default: 
+                    DateCom = <DatePicker  />;
+            }
+
+            return (DateCom)
         }
     }
     

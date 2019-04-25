@@ -371,6 +371,17 @@ let util = {
             return data;
         }
     },
+    getDateMoment(item,moment){
+        let defaultFormatList = {
+            date:"YYYY/MM/DD",
+            range:['DD/MM/YYYY','DD/MM/YY'],
+            week:"",
+            month:'YYYY/MM'
+        }
+        let defaultFmt = defaultFormatList[item.format || item.type];
+        let value = item.dateType === 'range' ? [moment(item.value[0] , defaultFmt),moment(item.value[1] , defaultFmt)] : moment(item.value , defaultFmt);
+        return item.value ? value : null;
+    },
 	initValidate(option) {
 		var obj = {};
 		var validateNum = "";
