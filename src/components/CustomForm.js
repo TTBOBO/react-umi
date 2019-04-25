@@ -7,7 +7,8 @@ import 'moment/locale/zh-cn';
 class CustomForm extends Component {
     state = {
         validata:{},
-        selectData:{}
+        selectData:{},
+        formData:{},
     }
     componentDidMount() {}
     async componentWillMount(){
@@ -78,6 +79,9 @@ class CustomForm extends Component {
             )
         })
     }
+    changeNum = (val) => {
+        
+    }
 
     getFormItemCon(item = {}){
         let inputTypes = ['input','password','textarea'];
@@ -89,7 +93,7 @@ class CustomForm extends Component {
             const {selectData} = this.state;
             const Option = Select.Option;
             return (
-                <Select style={{ width: 120 }} showArrow notFoundContent={item.neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={item.disable} mode={item.mode || ''} placeholder={item.allPla || (item.pla || `请选择${item.label}`)}>
+                <Select style={{ width: 120 }} onChange={this.changeNum} showArrow notFoundContent={item.neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={item.disable} mode={item.mode || ''} placeholder={item.allPla || (item.pla || `请选择${item.label}`)}>
                    {selectData[item.field] && selectData[item.field].map(item => <Option key={item.value} value={item.value}>{item.label}</Option>)}
                 </Select>
             )
@@ -120,7 +124,6 @@ class CustomForm extends Component {
                 showTime:item.showTime || false,
                 format:item.format || null
             }
-            console.log(DateType)
             switch (DateType){
                 case 'date': 
                     DateCom = <DatePicker {...obj} />;
@@ -169,6 +172,13 @@ class CustomForm extends Component {
           )
     }
 
+    setFieldsValue(name,value){
+        let obj = {[name]:value};
+        // console.log(obj)
+        console.log(this);
+        this.props.form.mapPropsToFields({[name]:value});
+    }
+
     render() {
         const {labelAlign,labelCol} = this.props.formOption;
         return (
@@ -192,9 +202,27 @@ class CustomForm extends Component {
 export default  Form.create({
     name: 'CustomForm' ,
     onFieldsChange(props, fields){
-        // console.log(fields)
+       
+        
+        // util.debounce( props.getData,1000)(formData)
+        // util.throttle( props.getData,2000,2000)(formData);
+        
+        // let obj = {};
+        // for(var i in fields){
+        //     obj[[fields[i].name]] = fields[i].value;
+        // }
+        // this.setState({
+        //     formData:Object.assign({},this.state.formData,obj)
+        // },() => {
+        //     console.log(this.state.formData)
+        // })
     },
-    onValuesChange(_,values){
-        console.log(values)
+    // mapPropsToFields(props){
+    //     console.log(111)
+    // },  
+    onValuesChange(props,values){
+        // console.log(props)
+        let formData = props.form.getFieldsValue();
+        props.getData && props.getData(formData);
     }
 })(CustomForm);;

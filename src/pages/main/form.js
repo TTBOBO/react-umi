@@ -21,14 +21,22 @@ class Form extends Component {
         return (<Input placeholder="请输入用户名"></Input>)
     }
     getRefs(refs){
-        this.refs = refs;
+        this.refsForm = refs;
+    }
+    getData = (data) => {
+        console.log(data);
+        // console.log(this)
+        if(data.password === '2222'){
+            // console.log(1111);
+            this.refsForm.setFieldsValue('username','3333');
+        }
     }
     componentDidMount() {
     }
     render() {
         return (
             <div style={{width:'300px'}}>
-                <CustomForm formOption={this.state.formOption} wrappedComponentRef={this.getRefs.bind(this)} />
+                <CustomForm formOption={this.state.formOption} wrappedComponentRef={this.getRefs.bind(this)} getData={this.getData} />
             </div>
             
         )
