@@ -379,7 +379,9 @@ let util = {
             month:'YYYY/MM'
         }
         let defaultFmt = defaultFormatList[item.format || item.type];
-        let value = item.dateType === 'range' ? [moment(item.value[0] , defaultFmt),moment(item.value[1] , defaultFmt)] : moment(item.value , defaultFmt);
+        let value = item.dateType === 'range' 
+            ? (item.value.length !== 0 ? ([moment(item.value[0] , defaultFmt),moment(item.value[1] , defaultFmt)] ) : [])
+            : moment(item.value , defaultFmt);
         return item.value ? value : null;
     },
 	initValidate(option) {

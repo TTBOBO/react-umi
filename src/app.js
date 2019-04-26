@@ -1,6 +1,11 @@
 
 import router from 'umi/router';
 import RoutersArr from '../config/config.router';
+import React, { Component } from 'react'
+import {ajaxGet,ajaxPost} from './server/ajax'
+
+React.$ajaxGet = ajaxGet;
+React.$ajaxPost = ajaxPost;
 export const dva = {
   config: {
     onError(err) {
