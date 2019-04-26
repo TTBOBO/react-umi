@@ -86,7 +86,7 @@ class CustomForm extends Component {
             obj.initialValue = (item.type === 'date' ? util.getDateMoment(item,moment) : item.value)
             return (
                 <Form.Item
-                    style={{width:layout === 'inline' ? item.width+'px' : "200px"}}
+                    style={{width:layout === 'inline' ? (item.width ?  item.width+'px' : "200px") : ''}}
                     key={'item_'+index}
                     label={item.label}
                     {...this.getLabelConLayout(labelCol)}
