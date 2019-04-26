@@ -60,7 +60,7 @@ class CustomForm extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log(values)
+                console.log(values);
             }
         });
     }
@@ -74,16 +74,16 @@ class CustomForm extends Component {
         }
     }
     getItemRule(label){
-        return this.state.validata[label] || []
+        return this.state.validata[label] || [];
     }
     getFormCol(){
         const {formList = [],labelCol,layout} = this.props.formOption;
         const { getFieldDecorator } = this.props.form;
         return formList.map((item,index) => {
             let obj = {};
-            obj.rules = this.getItemRule(item.field)
+            obj.rules = this.getItemRule(item.field);
             if(item.type === 'switch')  obj.valuePropName = 'checked';
-            obj.initialValue = (item.type === 'date' ? util.getDateMoment(item,moment) : item.value)
+            obj.initialValue = (item.type === 'date' ? util.getDateMoment(item,moment) : item.value);
             return (
                 <Form.Item
                     style={{width:layout === 'inline' ? (item.width ?  item.width+'px' : "200px") : ''}}
@@ -182,9 +182,9 @@ class CustomForm extends Component {
     getFormItemCon(item = {}){
         let inputTypes = ['input','password'];
         if(inputTypes.indexOf(item.type) != -1 || !item.type){
-            return (<Input prefix={item.icon || ""}  onChange={this.changeNum.bind(this,item)} type={item.type} placeholder={item.allPla || (item.pla || `请输入${item.label}`)} disabled={item.disable} allowClear  suffix={this.getSuffix(item.suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />)
+            return (<Input prefix={item.icon || ""}  onChange={this.changeNum.bind(this,item)} type={item.type} placeholder={item.allPla || (item.pla || `请输入${item.label}`)} disabled={item.disable} allowClear  suffix={this.getSuffix(item.suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />);
         }else if(item.type === 'number'){
-            return ( <InputNumber onChange={this.changeNum.bind(this,item)} formatter={item.formatter} disabled={item.disable} parser={item.parser} />)
+            return ( <InputNumber onChange={this.changeNum.bind(this,item)} formatter={item.formatter} disabled={item.disable} parser={item.parser} />);
         }else if(item.type === 'select'){
             const {selectData} = this.state;
             const Option = Select.Option;
@@ -192,7 +192,7 @@ class CustomForm extends Component {
                 <Select style={{ width: 120 }} onChange={this.changeNum.bind(this,item)} showArrow notFoundContent={item.neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={item.disable} mode={item.mode || ''} placeholder={item.allPla || (item.pla || `请选择${item.label}`)}>
                    {selectData[item.field] && selectData[item.field].map(item => <Option key={item.value} value={item.value}>{item.label}</Option>)}
                 </Select>
-            )
+            );
         }else if(item.type === 'radio'){
             const {selectData} = this.state;
             const RadioGroup = Radio.Group;
@@ -200,13 +200,13 @@ class CustomForm extends Component {
                 selectData[item.field] ? (item.group ? <RadioGroup onChange={this.changeNum.bind(this,item)}>
                     {selectData[item.field].map(item => <Radio key={item.value} value={item.value}>{item.label}</Radio>)}
                 </RadioGroup> : <Radio disabled={item.disabled}>{selectData[item.field][0].label}</Radio>) : <span></span>
-            )
+            );
         }else if(item.type === 'checkbox'){
             const CheckboxGroup = Checkbox.Group
             const {selectData} = this.state;
             return (
                 selectData[item.field] ?  (item.group ? <CheckboxGroup options={ selectData[item.field]} onChange={this.changeNum.bind(this,item)}/> :  <Checkbox  onChange={this.changeNum.bind(this,item)}  disabled={item.disabled}>{selectData[item.field][0].label} </Checkbox>) : <span></span>
-            )
+            );
         }else if(item.type === 'switch'){
             return ( <Switch onChange={this.changeNum.bind(this,item)} checkedChildren={item.checkText || "开"} unCheckedChildren={item.uncheckText || "关"} />)
         }else if(item.type === 'date'){
@@ -220,7 +220,7 @@ class CustomForm extends Component {
                 showTime:item.showTime || false,
                 format:item.format || null,
                 onChange:this.changeNum.bind(this,item)
-            }
+            };
             switch (DateType){
                 case 'date': 
                     DateCom = <DatePicker {...obj}  />;
@@ -237,7 +237,7 @@ class CustomForm extends Component {
                 default: 
                     DateCom = <DatePicker {...obj} />;
             }
-            return (DateCom)
+            return (DateCom);
         }
     }
     
@@ -250,14 +250,14 @@ class CustomForm extends Component {
         if(!addonBefore) return null;
         return (
             typeof addonBefore === 'string' ? addonBefore : addonBefore
-          )
+          );
     }
     getAfter(item){
         const {addonAfter} = item;
         if(!addonAfter) return null;
         return (
             typeof addonAfter === 'string' ? addonAfter : addonAfter
-          )
+          );
     }
     getSuffix(suffix){
         if(!suffix) return null;
@@ -265,7 +265,7 @@ class CustomForm extends Component {
             typeof suffix === 'string' ? <Tooltip title={suffix}>
                 <Icon type="info-circle" style={{ color: 'rgba(0,0,0,.45)' }} />
             </Tooltip> : suffix
-          )
+          );
     }
 
     render() {
@@ -284,7 +284,7 @@ class CustomForm extends Component {
                  {this.props.children}
                 </Form.Item>}
             </Form>
-        )
+        );
     }
 }
 
@@ -295,4 +295,4 @@ export default  Form.create({
         let formData = props.form.getFieldsValue();
         props.getData && props.getData(Object.assign({},formData,values));
     }
-})(CustomForm);;
+})(CustomForm);
