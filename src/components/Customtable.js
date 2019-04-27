@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
 import {Table,Button} from 'antd';
 import styles from './index.less'
+import CustomForm from './CustomForm';
 const { Column, ColumnGroup } = Table;
+
 export default class Customtable extends Component {
     state = {
         current:1,
         pageSize:10,
         total:50,
         topBtnGroup:[],  //顶部按钮组
-        selectItem:[]  //选中的地址
+        selectItem:[],  //选中的地址
+        searchList:[],
     }
     componentWillMount(){
-        const {optionData:{search:{page,size}}} = this.props;
+        const {optionData:{search:{page,size},columns}} = this.props;
         const {current,pageSize} = this.state;
         this.setState({
             current:page || current,
@@ -19,8 +22,34 @@ export default class Customtable extends Component {
             topBtnGroup:this.props.optionData.topBtnGroup.map((item) =>{
                 item.disabled = this.getDisStatus(item);
                 return item
+            }),
+            searchList:this.getSearchList(this.initSearch(columns))  //初始化搜索列表
+        })
+    }
+    getSearchList(data){
+        let list = [];
+        data.forEach((item) => {
+            list.push({
+                label:item.title,
+                field:item.prop,
+                value:item.value || '',
+                type:item.type,
+                dateType:item.type,
             })
         })
+        return list;
+
+    }
+    initSearch(columns){
+        let arr = [];
+        columns.forEach(item => {
+            if(item.search && !item.hidden){
+                arr.push(item);
+            }
+            if(item.children)
+            arr.push(...this.initSearch(item.children));
+        })
+        return arr;
     }
     async selectionChange(selectedRowKeys,selectedRows){
         await this.setState({selectItem:selectedRowKeys});
@@ -136,6 +165,18 @@ export default class Customtable extends Component {
     reloadTable(){
         
     }
+    getSearchCode(data){
+        // console.log(data);
+    }
+    getRefs(refs){
+        this.refsForm = refs;
+    }
+    async search(){
+        let res = await this.refsForm.validate();
+        if(res){
+            console.log(res);
+        }
+    }
     render() {
         const {optionData} = this.props; 
         const selsctionStatus = ( optionData.selection ? this.getSelection(optionData.selection) : null);
@@ -191,10 +232,18 @@ export default class Customtable extends Component {
                 address: 'Sidney No. 1 Lake Park',
               }
         ];
+        const searchOption = {
+            formList:this.state.searchList,
+            layout:'inline',
+            labelCol:6
+        }
         return (
             <div className={styles.tableContainer}>
                 {   
                     <div>
+                        {searchOption.formList.length && <CustomForm wrappedComponentRef={(form) => this.getRefs(form)} getData={this.getSearchCode.bind(this)} formOption={searchOption} >
+                            <Button type="primary" style={{marginRight:'10px'}}  onClick={this.search.bind(this)}> 查询 </Button>
+                        </CustomForm>}
                         <div className={styles.tabbelTopBtn}>{this.getTopBtn()}</div>
                         <Table dataSource={dataSource} onChange={this.changeTable.bind(this)} rowKey={optionData.rowKey} pagination={this.getPagination()}  expandedRowRender={optionData.expanded ? this.getExpand.bind(this) : null}  bordered={true} size={optionData.size || 'small'} rowSelection={selsctionStatus}
                             showHeader={optionData.showHeader || true}

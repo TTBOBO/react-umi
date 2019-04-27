@@ -76,10 +76,12 @@ class CustomForm extends Component {
     getItemRule(label){
         return this.state.validata[label] || [];
     }
+    
     getFormCol(){
         const {formList = [],labelCol,layout} = this.props.formOption;
         const { getFieldDecorator } = this.props.form;
         return formList.map((item,index) => {
+            if(item.hidden) return "";
             let obj = {};
             obj.rules = this.getItemRule(item.field);
             if(item.type === 'switch')  obj.valuePropName = 'checked';

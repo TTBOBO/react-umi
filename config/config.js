@@ -26,6 +26,7 @@ export default {
     routes:routers,
     lessLoaderOptions: {
       javascriptEnabled: true,
-    }
+    },
+    hash:true
   }
   
