@@ -1,7 +1,7 @@
 
 import router from 'umi/router';
 import RoutersArr from '../config/config.router';
-import React, { Component } from 'react'
+import React from 'react'
 import {ajaxGet,ajaxPost} from './server/ajax'
 
 React.$ajaxGet = ajaxGet;

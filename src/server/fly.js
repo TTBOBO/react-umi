@@ -14,7 +14,7 @@ fly.interceptors.response.use(res => {
     return res.data;
 },err => {
     const {response:{data:error}} = err;
-    const errotText = error && error[0].message; 
+    // const errotText = error && error[0].message; 
     return error;
 })
 

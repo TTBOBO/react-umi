@@ -36,7 +36,7 @@ export default class index extends Component {
                 columns:[
                     {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",children:[
                         {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend'},
-                        {title: '住址',prop: 'address',search:"name"}
+                        {title: '住址',prop: 'address',search:"name",type:"date",dateType:"range"}
                     ]},
                     {title: '性别',prop: 'sex',width:300},
                     {title: 'lev',prop: 'lev'},

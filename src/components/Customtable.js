@@ -34,7 +34,7 @@ export default class Customtable extends Component {
                 field:item.prop,
                 value:item.value || '',
                 type:item.type,
-                dateType:item.type,
+                dateType:item.dateType,
             })
         })
         return list;

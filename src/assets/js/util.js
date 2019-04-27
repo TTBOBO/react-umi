@@ -174,7 +174,7 @@ let util = {
 		 * 根据时间戳转时间
 		 */
 		getNowTime: function (time, statu = false, str = '-') {
-			if (time == "") {
+			if (time === "") {
 				return "请传入时间";
 			}
             // var time = new Date(time * 1000);
@@ -280,7 +280,7 @@ let util = {
 		var arrstr = document.cookie.split("; ");
 		for (var i = 0; i < arrstr.length; i++) {
 			var temp = arrstr[i].split("=");
-			if (temp[0] == name)
+			if (temp[0] === name)
 				return unescape(temp[1]);
 		}
 	},
@@ -289,7 +289,7 @@ let util = {
 		var date = new Date();
 		date.setTime(date.getTime() - 10000);
 		var cval = it.getCookie(name);
-		if (cval != null)
+		if (cval !== null)
 			document.cookie = name + "=" + cval + "; expires=" + date.toGMTString();
 	},
 	setLocalStorage: function (name, value) {
@@ -353,7 +353,7 @@ let util = {
     getAllStatus(Arr){
         return new Promise((resolve, reject) => {
             Promise.all(Arr).then(res => {
-                res.filter(item => item).length != res.length ? reject('部分必填项没有输入！') : resolve(true);
+                res.filter(item => item).length !== res.length ? reject('部分必填项没有输入！') : resolve(true);
             })
         })
     },
@@ -429,8 +429,8 @@ let util = {
 						trigger: item.blur || "blur"   //默认设置 blur
 					}
 				];
-			} else if (item.validate == "required") {
-				if ( !item.multiple && item.type != "upload" && item.type != "checkbox" ) {
+			} else if (item.validate === "required") {
+				if ( !item.multiple && item.type !== "upload" && item.type !== "checkbox" ) {
                     let inputType = ['input','password','textarea'];
 					//单选下拉是字符串
 					validateNum  = (rule, value, callback) => {
@@ -450,7 +450,7 @@ let util = {
 				} else if (item.type === "upload" || (item.type === "select" && item.multiple) || item.type === "checkbox") {
 					//单选下拉是字符串
 					validateNum  = (rule, value, callback) => {
-						if (value.length == 0) {
+						if (value.length === 0) {
 							callback(new Error("不能为空!"));
 						} else {
 							callback();
@@ -497,14 +497,14 @@ let util = {
     //status 3 {Abnormal: {label: "异常", value: "Abnormal"},Deleting: {label: "删除中", value: "Deleting"}} 转化成  [{value:'Abnormal',label:'异常'},{value:"Deleting",label:'删除中'}]
     getSelectOpt(data = [],status){
         let optArr = [];
-        if(status == 1){
+        if(status === 1){
             for (var i in data) {
                 optArr.push({
                     value: i,
                     label: data[i]
                 });
             }
-        }else if(status == 2){
+        }else if(status === 2){
             data.forEach(item => {
                 optArr.push({
                     value: item,
@@ -520,7 +520,7 @@ let util = {
             }
         }
         optArr.forEach((item,index) => {
-            if(item.label == '全部'){
+            if(item.label === '全部'){
                 optArr.splice(index,1);
                 optArr.unshift(item);
                 return false;
@@ -588,19 +588,19 @@ let util = {
     getStartIndex(parentData,code){
         let obj = {},str = "";
         parentData.reduce((cur,res,index) => {
-            if(index == 0){
+            if(index === 0){
                 str = res[code];
                 return cur
             }else{
-                if(res[code] != str){
-                    if(index == parentData.length -1){
+                if(res[code] !== str){
+                    if(index === parentData.length -1){
                         obj[index] = [index,index]
                     }
                     obj[cur[0]] = [cur[0],index-1]
                     str = res[code];
                     return [index];
                 }else{
-                    if(index == parentData.length -1){
+                    if(index === parentData.length -1){
                         obj[cur[0]] = [cur[0],index];
                     }
                     return cur

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Tooltip, Icon, Button ,InputNumber, Select, Radio, Checkbox, Switch, DatePicker} from 'antd';
+import { Form, Input, Tooltip, Icon ,InputNumber, Select, Radio, Checkbox, Switch, DatePicker} from 'antd';
 import util from '@/assets/js/util.js';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
@@ -31,9 +31,9 @@ class CustomForm extends Component {
         let selectTypes = ['select','radio','checkbox'];
         let promises = [],optionsArr = [];
         formList.forEach((item,index) => {
-            if((selectTypes.indexOf(item.type) != -1) && !item.optionUrl){
+            if((selectTypes.indexOf(item.type) !== -1) && !item.optionUrl){
                 selectData[item.field] = util.getFormSelectOpt(item.selectOption)
-            }else if((selectTypes.indexOf(item.type) != -1) && item.optionUrl){
+            }else if((selectTypes.indexOf(item.type) !== -1) && item.optionUrl){
                 optionsArr = [];
                 promises.push(React.$ajaxGet(item.optionUrl,item.selectPar,item.dataType || 3).then(res => {
                     res.result[item.urlkey].forEach((_item) => {
@@ -76,7 +76,7 @@ class CustomForm extends Component {
     getItemRule(label){
         return this.state.validata[label] || [];
     }
-    
+
     getFormCol(){
         const {formList = [],labelCol,layout} = this.props.formOption;
         const { getFieldDecorator } = this.props.form;
@@ -107,7 +107,7 @@ class CustomForm extends Component {
             let inputTypes = ['input','password','radio'];
             if((type === 'checkbox' && !group)){
                 val = val.target.checked; 
-            }else if(inputTypes.indexOf(type) != -1) {
+            }else if(inputTypes.indexOf(type) !== -1) {
                 val = val.target.value; 
             }
             this.props['On'+item.field](val);
@@ -183,7 +183,7 @@ class CustomForm extends Component {
 
     getFormItemCon(item = {}){
         let inputTypes = ['input','password'];
-        if(inputTypes.indexOf(item.type) != -1 || !item.type){
+        if(inputTypes.indexOf(item.type) !== -1 || !item.type){
             return (<Input prefix={item.icon || ""}  onChange={this.changeNum.bind(this,item)} type={item.type} placeholder={item.allPla || (item.pla || `请输入${item.label}`)} disabled={item.disable} allowClear  suffix={this.getSuffix(item.suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />);
         }else if(item.type === 'number'){
             return ( <InputNumber onChange={this.changeNum.bind(this,item)} formatter={item.formatter} disabled={item.disable} parser={item.parser} />);

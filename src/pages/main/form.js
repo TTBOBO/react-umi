@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import CustomForm from '@/components/CustomForm'
-import { Input, Select, Button  } from 'antd';
-const Option = Select.Option;
+import { Input, Button  } from 'antd';
+// const Option = Select.Option;
 class Form extends Component {
     state = {
         formOption:{
