@@ -46,7 +46,7 @@ class CustomForm extends Component {
             }
         })
         await Promise.all(promises);
-        return selectData || [];
+        return selectData || {};
     }
     async validate(){
         return new Promise((resolve, reject) => {
