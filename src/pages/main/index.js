@@ -58,11 +58,7 @@ export default class index extends Component {
               }
         ]
     }
-    textRender = (tag,record,index) => {
-        return (
-            <div style={{color:"red"}}>{record.name}{index}</div>
-        )
-    }
+    textRender = ({record}) => (<span style={{color:"red"}}>{record.name}{index}</span>)
     renderHeader = (props) => {
         return (
            <span>
@@ -92,10 +88,12 @@ export default class index extends Component {
                 },
                 columns:[
                     {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",children:[
-                        {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend'},
-                        {title: '住址',prop: 'address',search:"name",type:""},
+                        // {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true},
+                        // {title: '住址',prop: 'address',search:"name",type:""},
                         
                     ]},
+                    {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true,width:200},
+                        {title: '住址',prop: 'address',search:"name",type:""},
                     {title: 'key',prop: 'key',search:"key",value:'2',type:"select",selectOption: {1:"测试1",2:"测试2"},
                         optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
                         }

@@ -3,6 +3,8 @@ import {Table,Button} from 'antd';
 import styles from './index.less'
 import CustomForm from './CustomForm';
 import util from '@/assets/js/util.js';
+import { Resizable } from 'react-resizable';
+import RenderDom from './Render';
 const { Column, ColumnGroup } = Table;
 
 export default class Customtable extends Component {
@@ -15,10 +17,14 @@ export default class Customtable extends Component {
         searchList:[],
         optionGroup:{},  //存储所有枚举数据
         tableFilters:{},  //存放当前table搜索条件
+        columns:[],
     }
     async componentWillMount(){
         const {optionData:{columns}} = this.props;
         const {page,size} = this.state;
+        // console.log(this.props.optionData.columns)
+        //     this.props.optionData.columns = []
+        //     console.log(this.props.optionData.columns)
         this.setState({
             // current:page || current,
             // pageSize:size || pageSize,
@@ -26,6 +32,7 @@ export default class Customtable extends Component {
                 item.disabled = this.getDisStatus(item);
                 return item
             }),
+            columns,
             searchList:await this.getSearchList(this.initSearch(columns)),  //初始化搜索列表
             tableFilters:Object.assign({},{page,size},this.props.optionData.search)
         },() => this.reloadTable())
@@ -120,25 +127,64 @@ export default class Customtable extends Component {
                         align={item.align || 'center'} 
                         className={item.className}
                         dataIndex={item.prop} 
+                        resize={item.resize}
                         key={item.prop}
-                        sorter={item.sort}
-                        defaultSortOrder={item.defaultSortOrder}
-                        fixed={item.fixed || false}
-                        sort={item.sort}
+                        sorter={item.sort  || null}
+                        defaultSortOrder={item.defaultSortOrder || null}
+                        fixed={item.fixed || null}
                         render={this.getRender.bind(this,item)} 
                         width={item.width}
+                        // onHeaderCell={this.onHeaderCell.bind(this,index)}
                     />
                 return (renderHtml)
             })
         )
     }
 
+    ResizeableTitle = (props) => {
+        const { onResize, width, resize,...restProps } = props;
+        // console.log(resize)
+        if (!width || !resize) {
+          return <th {...restProps} />;
+        }
+        // debugger
+        return (
+          <Resizable width={width} height={0} onResize={onResize}>
+            <th {...restProps}  className="resize"/>
+          </Resizable>
+        );
+      };
+    onHeaderCell(index,column){
+        let obj = {
+            width: column.width,
+            resize:column.resize||false
+        }
+        if(column.resize) obj.onResize = this.handleResize(index)
+        return obj 
+    }
+
+    handleResize = index => (e, { size }) => {
+        this.setState(({ columns }) => {
+            const nextColumns = [...columns];
+            nextColumns[index] = {
+            ...nextColumns[index],
+            width: size.width,
+            };
+            return { columns: nextColumns };
+        });
+    };
+
     getRender(item,text, record, index){
         const {optionGroup} = this.state;
         if(item.type === 'select'){
             return <span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>;
         }else if(item.render){
-            return item.render({item,text, record, index,optionGroup});
+            // const renderDom = item.render({item,text, record, index,optionGroup});
+            console.log(item.render({item,text, record, index,optionGroup}))
+            return (<RenderDom renderDom={item.render({item,text, record, index,optionGroup})}>
+                {/* {item.render({item,text, record, index,optionGroup})} */}
+            </RenderDom>)
+            
         }
         return text;
     }
@@ -209,26 +255,6 @@ export default class Customtable extends Component {
             tableFilters:Object.assign({},this.state.tableFilters,obj)
         },() => this.reloadTable())
     }
-    test(){
-        // this[this.optionData.ajaxType || '$ajaxGet'](this.optionData.baseUrl, this.search,this.optionData.urlType || 3).then(res => {
-        //     if(res.err_code == 0 || res.code == 200 || res.code == 0){
-        //         let dataKey = this.optionData.dataKey;
-        //         const data = this.optionData.urlType == 1 ? res.result[dataKey] : res.result.data;
-        //         this.$emit("tableData",res.result);
-        //         this.setTabelData( data);
-        //         if(params.saveSelection)
-        //             this.toggleRowSelection();
-        //         if(this.optionData.tableLoadIcon)
-        //             this.taskListloading = false;
-        //         this.search.count = this.optionData.urlType == 1 ? res.result.jobs_total_num : res.result.data_total_num;
-        //     }else{
-        //         this.$alert(res.err_msg ||  res.data.message || res.data.err_msg, "获取列表失败", {
-        //             dangerouslyUseHTMLString: true
-        //         });
-        //         this.taskTableData = [];
-        //     }
-        // });
-    }
     reloadTable(){
         console.log('获取table数据')
         const {ajaxType,baseUrl,urlType} = this.props.optionData
@@ -250,6 +276,11 @@ export default class Customtable extends Component {
             tableFilters:obj
         },() => this.reloadTable())
     }
+    components = {
+        header: {
+          cell: this.ResizeableTitle,
+        }
+    }
     render() {
         const {optionData ,dataSource} = this.props; 
         const selsctionStatus = ( optionData.selection ? this.getSelection(optionData.selection) : null);
@@ -270,8 +301,9 @@ export default class Customtable extends Component {
                             showHeader={optionData.showHeader || true}
                             locale={{emptyText:"暂无数据"}}
                             scroll={optionData.scroll || {}}
+                            // components={this.components}
                         >
-                            {this.getColumn(optionData.columns)}
+                            {this.getColumn(this.state.columns)}
                             {optionData.toolEvent && <Column align="center" title="操作" width={optionData.toolEventWidth || 100} key="action" render={this.getToolColumn.bind(this)} >
                             </Column>}
                         </Table>
