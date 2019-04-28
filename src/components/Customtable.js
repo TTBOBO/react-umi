@@ -119,57 +119,22 @@ export default class Customtable extends Component {
         };
     }
     getColumn(columnList = []){
-        console.log(columnList)
         return (
             columnList.map((item,index) => {
-                let columnOption = {
-                    title:item.title,
-                    align:item.align || 'center',
-                    className:item.className,
-                    dataIndex:item.prop,
-                    resize:item.resize,
-                    key:item.prop,
-                    sorter:item.sort  || null,
-                    defaultSortOrder:item.defaultSortOrder || null,
-                    fixed:item.fixed || null,
-                    width:item.width,
-                }
-                    const {optionGroup} = this.state;
-                    console.log(item.type)
-                    // columnOption.render = () =><span>111</span>
-                    if(item.type === 'select'){
-                        columnOption.render =  (text, record, index) => {
-                            return (<span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>)
-                        };
-                    }else if(item.render){
-                        columnOption.render =  (text, record, index) => {
-                            return (item.render(text, record, index,optionGroup))
-                        };
-                        // const renderDom = item.render({item,text, record, index,optionGroup});
-                        // console.log(item.render(item,text, record, index,optionGroup))
-                        // columnOption.render = item.render.bind(this,optionGroup)
-                        // return (<RenderDom renderDom={item.render({text, record, index,optionGroup})}>
-                        //     {/* {item.render({item,text, record, index,optionGroup})} */}
-                        // </RenderDom>)
-                        
-                    }
-                
-                console.log(columnOption)
                 
                 const renderHtml = (item.children && item.children.length) ? (<ColumnGroup key={item.title} title={item.title}>{this.getColumn(item.children)}</ColumnGroup>) :
                     <Column 
-                        {...columnOption}
-                        // title={item.title} 
-                        // align={item.align || 'center'} 
-                        // className={item.className}
-                        // dataIndex={item.prop} 
-                        // resize={item.resize}
-                        // key={item.prop}
-                        // sorter={item.sort  || null}
-                        // defaultSortOrder={item.defaultSortOrder || null}
-                        // fixed={item.fixed || null}
-                        // render={this.getRender.bind(this,item)} 
-                        // width={item.width}
+                        title={item.title} 
+                        align={item.align || 'center'} 
+                        className={item.className}
+                        dataIndex={item.prop} 
+                        resize={item.resize}
+                        key={item.prop}
+                        sorter={item.sort  || null}
+                        defaultSortOrder={item.defaultSortOrder || null}
+                        fixed={item.fixed || null}
+                        render={this.getRender.bind(this,item)} 
+                        width={item.width}
                         // onHeaderCell={this.onHeaderCell.bind(this,index)}
                     />
                 return (renderHtml)
@@ -179,7 +144,7 @@ export default class Customtable extends Component {
 
     ResizeableTitle = (props) => {
         const { onResize, width, resize,...restProps } = props;
-        // console.log(resize)
+        console.log(resize,width)
         if (!width || !resize) {
           return <th {...restProps} />;
         }
@@ -193,7 +158,7 @@ export default class Customtable extends Component {
     onHeaderCell(index,column){
         let obj = {
             width: column.width,
-            resize:column.resize||false
+            resize:column.resize||'false'
         }
         if(column.resize) obj.onResize = this.handleResize(index)
         return obj 
@@ -215,13 +180,7 @@ export default class Customtable extends Component {
         if(item.type === 'select'){
             return <span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>;
         }else if(item.render){
-            // const renderDom = item.render({item,text, record, index,optionGroup});
-            console.log(item.render(item,text, record, index,optionGroup))
-            return item.render(item,text, record, index,optionGroup)
-            // return (<RenderDom renderDom={item.render({item,text, record, index,optionGroup})}>
-            //     {/* {item.render({item,text, record, index,optionGroup})} */}
-            // </RenderDom>)
-            
+            return item.render({text, record, index,optionGroup,item})
         }
         return text;
     }
@@ -338,7 +297,7 @@ export default class Customtable extends Component {
                             showHeader={optionData.showHeader || true}
                             locale={{emptyText:"暂无数据"}}
                             scroll={optionData.scroll || {}}
-                            // components={this.components}
+                            components={this.components}
                         >
                             {this.getColumn(this.state.columns)}
                             {optionData.toolEvent && <Column align="center" title="操作" width={optionData.toolEventWidth || 100} key="action" render={this.getToolColumn.bind(this)} >
