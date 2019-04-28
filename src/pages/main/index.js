@@ -7,7 +7,7 @@ export default class index extends Component {
         optionData:null,
         dataSource:[
             {
-                key: 'cephfs-sz',
+                key: '2',
                 name: 'John Brown sr.',
                 age: 60,
                 address: 'New York No. 1 Lake Park',
@@ -51,14 +51,20 @@ export default class index extends Component {
                   }],
                 }],
               }, {
-                key: 'cephfs-sz-ssd',
+                key: '1',
                 name: 'Joe Black',
                 age: 32,
                 address: 'Sidney No. 1 Lake Park',
               }
         ]
     }
-    textRender = ({record}) => (<span style={{color:"red"}}>{record.name}{index}</span>)
+    textRender = (tag,record,index) => {
+        console.log(record)
+        return (
+            <span style={{color:"red"}}>{record.name}{index}</span>
+        )
+    }
+    // textRender = ({record}) => (<span style={{color:"red"}}>{record.name}{index}</span>)
     renderHeader = (props) => {
         return (
            <span>
@@ -87,11 +93,13 @@ export default class index extends Component {
                     user_name:"loongzhang"
                 },
                 columns:[
-                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",children:[
-                        // {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true},
-                        // {title: '住址',prop: 'address',search:"name",type:""},
+                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",
+                    // children:[
+                    //     // {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true},
+                    //     // {title: '住址',prop: 'address',search:"name",type:""},
                         
-                    ]},
+                    // ]
+                },
                     {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true,width:200},
                         {title: '住址',prop: 'address',search:"name",type:""},
                     {title: 'key',prop: 'key',search:"key",value:'2',type:"select",selectOption: {1:"测试1",2:"测试2"},

@@ -119,21 +119,57 @@ export default class Customtable extends Component {
         };
     }
     getColumn(columnList = []){
+        console.log(columnList)
         return (
             columnList.map((item,index) => {
+                let columnOption = {
+                    title:item.title,
+                    align:item.align || 'center',
+                    className:item.className,
+                    dataIndex:item.prop,
+                    resize:item.resize,
+                    key:item.prop,
+                    sorter:item.sort  || null,
+                    defaultSortOrder:item.defaultSortOrder || null,
+                    fixed:item.fixed || null,
+                    width:item.width,
+                }
+                    const {optionGroup} = this.state;
+                    console.log(item.type)
+                    // columnOption.render = () =><span>111</span>
+                    if(item.type === 'select'){
+                        columnOption.render =  (text, record, index) => {
+                            return (<span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>)
+                        };
+                    }else if(item.render){
+                        columnOption.render =  (text, record, index) => {
+                            return (item.render(text, record, index,optionGroup))
+                        };
+                        // const renderDom = item.render({item,text, record, index,optionGroup});
+                        // console.log(item.render(item,text, record, index,optionGroup))
+                        // columnOption.render = item.render.bind(this,optionGroup)
+                        // return (<RenderDom renderDom={item.render({text, record, index,optionGroup})}>
+                        //     {/* {item.render({item,text, record, index,optionGroup})} */}
+                        // </RenderDom>)
+                        
+                    }
+                
+                console.log(columnOption)
+                
                 const renderHtml = (item.children && item.children.length) ? (<ColumnGroup key={item.title} title={item.title}>{this.getColumn(item.children)}</ColumnGroup>) :
                     <Column 
-                        title={item.title} 
-                        align={item.align || 'center'} 
-                        className={item.className}
-                        dataIndex={item.prop} 
-                        resize={item.resize}
-                        key={item.prop}
-                        sorter={item.sort  || null}
-                        defaultSortOrder={item.defaultSortOrder || null}
-                        fixed={item.fixed || null}
-                        render={this.getRender.bind(this,item)} 
-                        width={item.width}
+                        {...columnOption}
+                        // title={item.title} 
+                        // align={item.align || 'center'} 
+                        // className={item.className}
+                        // dataIndex={item.prop} 
+                        // resize={item.resize}
+                        // key={item.prop}
+                        // sorter={item.sort  || null}
+                        // defaultSortOrder={item.defaultSortOrder || null}
+                        // fixed={item.fixed || null}
+                        // render={this.getRender.bind(this,item)} 
+                        // width={item.width}
                         // onHeaderCell={this.onHeaderCell.bind(this,index)}
                     />
                 return (renderHtml)
@@ -180,10 +216,11 @@ export default class Customtable extends Component {
             return <span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>;
         }else if(item.render){
             // const renderDom = item.render({item,text, record, index,optionGroup});
-            console.log(item.render({item,text, record, index,optionGroup}))
-            return (<RenderDom renderDom={item.render({item,text, record, index,optionGroup})}>
-                {/* {item.render({item,text, record, index,optionGroup})} */}
-            </RenderDom>)
+            console.log(item.render(item,text, record, index,optionGroup))
+            return item.render(item,text, record, index,optionGroup)
+            // return (<RenderDom renderDom={item.render({item,text, record, index,optionGroup})}>
+            //     {/* {item.render({item,text, record, index,optionGroup})} */}
+            // </RenderDom>)
             
         }
         return text;
