@@ -13,9 +13,13 @@ fly.interceptors.request.use(async (request) => {
 fly.interceptors.response.use(res => {
     return res.data;
 },err => {
-    const {response:{data:error}} = err;
-    // const errotText = error && error[0].message; 
-    return error;
+    if(err.response){
+        const {response:{data:error}} = err;
+        return error;
+    }else{
+        const {message} = err;
+        return message;
+    }
 })
 
 export default fly;

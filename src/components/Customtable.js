@@ -2,41 +2,69 @@ import React, { Component } from 'react'
 import {Table,Button} from 'antd';
 import styles from './index.less'
 import CustomForm from './CustomForm';
+import util from '@/assets/js/util.js';
 const { Column, ColumnGroup } = Table;
 
 export default class Customtable extends Component {
     state = {
-        current:1,
-        pageSize:10,
+        page:1,
+        size:10,
         total:50,
         topBtnGroup:[],  //顶部按钮组
         selectItem:[],  //选中的地址
         searchList:[],
+        optionGroup:{},  //存储所有枚举数据
+        tableFilters:{},  //存放当前table搜索条件
     }
-    componentWillMount(){
-        const {optionData:{search:{page,size},columns}} = this.props;
-        const {current,pageSize} = this.state;
+    async componentWillMount(){
+        const {optionData:{columns}} = this.props;
+        const {page,size} = this.state;
         this.setState({
-            current:page || current,
-            pageSize:size || pageSize,
+            // current:page || current,
+            // pageSize:size || pageSize,
             topBtnGroup:this.props.optionData.topBtnGroup.map((item) =>{
                 item.disabled = this.getDisStatus(item);
                 return item
             }),
-            searchList:this.getSearchList(this.initSearch(columns))  //初始化搜索列表
-        })
+            searchList:await this.getSearchList(this.initSearch(columns)),  //初始化搜索列表
+            tableFilters:Object.assign({},{page,size},this.props.optionData.search)
+        },() => this.reloadTable())
     }
-    getSearchList(data){
+    async getSearchList(data){
         let list = [];
+        let selectTypes = ['select','radio','checkbox'];
+        let promises = [],optionsArr = [];
         data.forEach((item) => {
-            list.push({
+            let obj = {
                 label:item.title,
                 field:item.prop,
                 value:item.value || '',
                 type:item.type,
                 dateType:item.dateType,
-            })
+            }
+            if((selectTypes.indexOf(item.type) !== -1) && !item.optionUrl){
+                obj.selectOption = util.getFormSelectOpt(item.selectOption);
+                this.setState({
+                    optionGroup:Object.assign({},this.state.optionGroup,{[item.prop] : item.selectOption})
+                })
+            }else if((selectTypes.indexOf(item.type) !== -1) && item.optionUrl){
+                optionsArr = [];
+                promises.push(React.$ajaxGet(item.optionUrl,item.selectPar,item.dataType || 3).then(res => {
+                    res.result[item.urlkey].forEach((_item) => {
+                        (item.colKey && item.colName ) ? optionsArr.push({value: _item[item.colKey],label: _item[item.colName]}):optionsArr.push({value: _item,label: _item});
+                    });
+                    if(item.selectOption)
+                        optionsArr = [...util.getFormSelectOpt(item.selectOption),...optionsArr];  //默认的数据放前面，接口数据放后面
+                        obj.selectOption = optionsArr;
+                        this.setState({
+                            optionGroup:Object.assign({},this.state.optionGroup,{[item.prop] :util.getSelectReverse( optionsArr )})
+                        })
+                }))
+            }
+
+            list.push(obj)
         })
+        await Promise.all(promises);
         return list;
 
     }
@@ -52,7 +80,7 @@ export default class Customtable extends Component {
         return arr;
     }
     async selectionChange(selectedRowKeys,selectedRows){
-        await this.setState({selectItem:selectedRowKeys});
+        await this.setState({selectItem:selectedRows});
         this.setState({
             topBtnGroup:this.state.topBtnGroup.map((item,index) => {
                 if(!item.hasSel)
@@ -97,12 +125,22 @@ export default class Customtable extends Component {
                         defaultSortOrder={item.defaultSortOrder}
                         fixed={item.fixed || false}
                         sort={item.sort}
-                        render={item.render} 
+                        render={this.getRender.bind(this,item)} 
                         width={item.width}
                     />
                 return (renderHtml)
             })
         )
+    }
+
+    getRender(item,text, record, index){
+        const {optionGroup} = this.state;
+        if(item.type === 'select'){
+            return <span>{optionGroup[item.prop] && optionGroup[item.prop][text]}</span>;
+        }else if(item.render){
+            return item.render({item,text, record, index,optionGroup});
+        }
+        return text;
     }
     getToolColumn(text, record){
         const {optionData} = this.props; 
@@ -149,7 +187,7 @@ export default class Customtable extends Component {
         return (
             this.state.topBtnGroup.map((item,index) => {
                 return (
-                    <Button disabled={item.disabled}  className={styles.btn} type={item.type || "primary"} key={index} onClick={item.onClick && item.onClick({item,index})}>
+                    <Button disabled={item.disabled}  className={styles.btn} type={item.type || "primary"} key={index} onClick={item.onClick && item.onClick.bind(this,{item,index,selectItem:this.state.selectItem})}>
                        {item.name}
                     </Button>
                 )
@@ -160,78 +198,61 @@ export default class Customtable extends Component {
         this.setState({pageSize,current})
     }
     changeTable(pagination,filters,sorter){
-        console.log(pagination,filters,sorter)
+        let obj = {};
+        if(sorter.field){
+            obj.sort = sorter.field;
+            obj.sort_type = sorter.order === "descend" ? 'desc' : 'asc';
+        }
+        obj.page = pagination.current;
+        obj.size = pagination.pageSize;
+        this.setState({
+            tableFilters:Object.assign({},this.state.tableFilters,obj)
+        },() => this.reloadTable())
+    }
+    test(){
+        // this[this.optionData.ajaxType || '$ajaxGet'](this.optionData.baseUrl, this.search,this.optionData.urlType || 3).then(res => {
+        //     if(res.err_code == 0 || res.code == 200 || res.code == 0){
+        //         let dataKey = this.optionData.dataKey;
+        //         const data = this.optionData.urlType == 1 ? res.result[dataKey] : res.result.data;
+        //         this.$emit("tableData",res.result);
+        //         this.setTabelData( data);
+        //         if(params.saveSelection)
+        //             this.toggleRowSelection();
+        //         if(this.optionData.tableLoadIcon)
+        //             this.taskListloading = false;
+        //         this.search.count = this.optionData.urlType == 1 ? res.result.jobs_total_num : res.result.data_total_num;
+        //     }else{
+        //         this.$alert(res.err_msg ||  res.data.message || res.data.err_msg, "获取列表失败", {
+        //             dangerouslyUseHTMLString: true
+        //         });
+        //         this.taskTableData = [];
+        //     }
+        // });
     }
     reloadTable(){
-        
-    }
-    getSearchCode(data){
-        // console.log(data);
+        console.log('获取table数据')
+        const {ajaxType,baseUrl,urlType} = this.props.optionData
+        React[ajaxType || '$ajaxGet'](baseUrl,this.state.tableFilters,urlType || 3).then(res => {
+           console.log(res);
+        })
     }
     getRefs(refs){
         this.refsForm = refs;
     }
     async search(){
         let res = await this.refsForm.validate();
-        if(res){
-            console.log(res);
+        let afterFilter = Object.assign({},this.state.tableFilters,res);
+        let obj = {};
+        for(var i in afterFilter){
+            if(afterFilter[i]) obj[i] = afterFilter[i];
         }
+        this.setState({
+            tableFilters:obj
+        },() => this.reloadTable())
     }
     render() {
-        const {optionData} = this.props; 
+        const {optionData ,dataSource} = this.props; 
         const selsctionStatus = ( optionData.selection ? this.getSelection(optionData.selection) : null);
-        const dataSource = [
-            {
-                key: 1,
-                name: 'John Brown sr.',
-                age: 60,
-                address: 'New York No. 1 Lake Park',
-                children: [{
-                  key: 11,
-                  name: 'John Brown',
-                  age: 42,
-                  address: 'New York No. 2 Lake Park',
-                }, {
-                  key: 12,
-                  name: 'John Brown jr.',
-                  age: 30,
-                  address: 'New York No. 3 Lake Park',
-                  children: [{
-                    key: 121,
-                    name: 'Jimmy Brown',
-                    age: 16,
-                    address: 'New York No. 3 Lake Park',
-                  }],
-                }, {
-                  key: 13,
-                  name: 'Jim Green sr.',
-                  age: 72,
-                  address: 'London No. 1 Lake Park',
-                  children: [{
-                    key: 131,
-                    name: 'Jim Green',
-                    age: 42,
-                    address: 'London No. 2 Lake Park',
-                    children: [{
-                      key: 1311,
-                      name: 'Jim Green jr.',
-                      age: 25,
-                      address: 'London No. 3 Lake Park',
-                    }, {
-                      key: 1312,
-                      name: 'Jimmy Green sr.',
-                      age: 18,
-                      address: 'London No. 4 Lake Park',
-                    }],
-                  }],
-                }],
-              }, {
-                key: 2,
-                name: 'Joe Black',
-                age: 32,
-                address: 'Sidney No. 1 Lake Park',
-              }
-        ];
         const searchOption = {
             formList:this.state.searchList,
             layout:'inline',
@@ -241,7 +262,7 @@ export default class Customtable extends Component {
             <div className={styles.tableContainer}>
                 {   
                     <div>
-                        {searchOption.formList.length && <CustomForm wrappedComponentRef={(form) => this.getRefs(form)} getData={this.getSearchCode.bind(this)} formOption={searchOption} >
+                        {searchOption.formList.length && <CustomForm wrappedComponentRef={(form) => this.getRefs(form)} formOption={searchOption} >
                             <Button type="primary" style={{marginRight:'10px'}}  onClick={this.search.bind(this)}> 查询 </Button>
                         </CustomForm>}
                         <div className={styles.tabbelTopBtn}>{this.getTopBtn()}</div>
@@ -255,7 +276,6 @@ export default class Customtable extends Component {
                             </Column>}
                         </Table>
                     </div>
-                     
                 }
             </div>
         )
