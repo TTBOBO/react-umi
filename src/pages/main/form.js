@@ -9,7 +9,7 @@ class Form extends Component {
                 {label:"用户名",type:"number",value:30,field:"username",hidden:false,render:false,addonBefore:"测试",suffix:"tip"},
                 {label:"密码",type:"password",value:"222",field:"password" ,validate: "required"},
                 {label:"城市",type:"select",mode:"",group:true,value:'desc',field:"city" ,validate: "required",selectOption: {desc:"深圳",asc:"南昌"},
-                optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
+                // optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
                 },
                 {label:"爱好",type:"checkbox",group:false,value:['desc'],field:"time" ,validate: "required",selectOption: {desc:"泡妞",asc:"唱歌"}},
                 {label:"性别",type:"radio",group:true,value:'nan',field:"sex" ,validate: "required",selectOption: {nan:"男",nv:"女"}},

@@ -4,7 +4,6 @@ import styles from './index.less'
 import CustomForm from './CustomForm';
 import util from '@/assets/js/util.js';
 import { Resizable } from 'react-resizable';
-import RenderDom from './Render';
 const { Column, ColumnGroup } = Table;
 
 export default class Customtable extends Component {
@@ -22,12 +21,7 @@ export default class Customtable extends Component {
     async componentWillMount(){
         const {optionData:{columns}} = this.props;
         const {page,size} = this.state;
-        // console.log(this.props.optionData.columns)
-        //     this.props.optionData.columns = []
-        //     console.log(this.props.optionData.columns)
         this.setState({
-            // current:page || current,
-            // pageSize:size || pageSize,
             topBtnGroup:this.props.optionData.topBtnGroup.map((item) =>{
                 item.disabled = this.getDisStatus(item);
                 return item
@@ -121,7 +115,6 @@ export default class Customtable extends Component {
     getColumn(columnList = []){
         return (
             columnList.map((item,index) => {
-                
                 const renderHtml = (item.children && item.children.length) ? (<ColumnGroup key={item.title} title={item.title}>{this.getColumn(item.children)}</ColumnGroup>) :
                     <Column 
                         title={item.title} 
@@ -135,7 +128,7 @@ export default class Customtable extends Component {
                         fixed={item.fixed || null}
                         render={this.getRender.bind(this,item)} 
                         width={item.width}
-                        // onHeaderCell={this.onHeaderCell.bind(this,index)}
+                        onHeaderCell={this.onHeaderCell.bind(this,index)}
                     />
                 return (renderHtml)
             })
@@ -144,11 +137,9 @@ export default class Customtable extends Component {
 
     ResizeableTitle = (props) => {
         const { onResize, width, resize,...restProps } = props;
-        console.log(resize,width)
         if (!width || !resize) {
           return <th {...restProps} />;
         }
-        // debugger
         return (
           <Resizable width={width} height={0} onResize={onResize}>
             <th {...restProps}  className="resize"/>
@@ -254,9 +245,9 @@ export default class Customtable extends Component {
     reloadTable(){
         console.log('获取table数据')
         const {ajaxType,baseUrl,urlType} = this.props.optionData
-        React[ajaxType || '$ajaxGet'](baseUrl,this.state.tableFilters,urlType || 3).then(res => {
-           console.log(res);
-        })
+        // React[ajaxType || '$ajaxGet'](baseUrl,this.state.tableFilters,urlType || 3).then(res => {
+        //    console.log(res);
+        // })
     }
     getRefs(refs){
         this.refsForm = refs;

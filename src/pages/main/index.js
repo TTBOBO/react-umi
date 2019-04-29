@@ -12,38 +12,38 @@ export default class index extends Component {
                 age: 60,
                 address: 'New York No. 1 Lake Park',
                 children: [{
-                  key: 11,
+                  key: '2',
                   name: 'John Brown',
                   age: 42,
                   address: 'New York No. 2 Lake Park',
                 }, {
-                  key: 12,
+                  key: '2',
                   name: 'John Brown jr.',
                   age: 30,
                   address: 'New York No. 3 Lake Park',
                   children: [{
-                    key: 121,
+                    key: '1',
                     name: 'Jimmy Brown',
                     age: 16,
                     address: 'New York No. 3 Lake Park',
                   }],
                 }, {
-                  key: 3,
+                  key: '2',
                   name: 'Jim Green sr.',
                   age: 72,
                   address: 'London No. 1 Lake Park',
                   children: [{
-                    key: 131,
+                    key: '1',
                     name: 'Jim Green',
-                    age: 42,
+                    age: 44,
                     address: 'London No. 2 Lake Park',
                     children: [{
-                      key: 1311,
+                      key: '1',
                       name: 'Jim Green jr.',
                       age: 25,
                       address: 'London No. 3 Lake Park',
                     }, {
-                      key: 1312,
+                      key: '2',
                       name: 'Jimmy Green sr.',
                       age: 18,
                       address: 'London No. 4 Lake Park',
@@ -82,7 +82,7 @@ export default class index extends Component {
                 selection:{},
                 // expanded:true,
                 // hidePage:true,
-                rowKey:"key",
+                rowKey:"age",
                 scroll:{x:1000},
                 search: {
                     // page: 1,  //页数
@@ -92,7 +92,7 @@ export default class index extends Component {
                     user_name:"loongzhang"
                 },
                 columns:[
-                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",
+                    {title: this.renderHeader,prop: 'name',render:this.textRender,sort:true,width:200,align:"left",resize:true
                     // children:[
                     //     // {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:true},
                     //     // {title: '住址',prop: 'address',search:"name",type:""},
@@ -102,7 +102,7 @@ export default class index extends Component {
                     {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:false},
                         {title: '住址',prop: 'address',search:"name",type:""},
                     {title: 'key',prop: 'key',search:"key",value:'2',type:"select",selectOption: {1:"测试1",2:"测试2"},
-                        optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
+                        // optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
                         }
                     // {title: '年龄',prop: 'age',width:300},
                     // {title: '地址',prop: 'address'},
