@@ -86,6 +86,8 @@ class CustomForm extends Component {
             obj.rules = this.getItemRule(item.field);
             if(item.type === 'switch')  obj.valuePropName = 'checked';
             obj.initialValue = (item.type === 'date' ? util.getDateMoment(item,moment) : item.value);
+            if(item.type === 'upload') obj.getValueFromEvent = (e) => Array.isArray(e) ? e : (e && e.fileList);
+            if(item.type === 'custom') obj.getValueFromEvent = (e) => e;
             return (
                 <Form.Item
                     style={{width:layout === 'inline' ? (item.width ?  item.width+'px' : "200px") : ''}}
@@ -94,7 +96,7 @@ class CustomForm extends Component {
                     {...this.getLabelConLayout(labelCol)}
                 >
                     {getFieldDecorator(item.field, obj)(
-                        item.render ? (item.render) : this.getFormItemCon(item)
+                        item.render ? item.render(item) : this.getFormItemCon(item)
                     )}
                 </Form.Item>
             )
