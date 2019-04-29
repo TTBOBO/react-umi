@@ -244,6 +244,7 @@ export default class Customtable extends Component {
     }
     reloadTable(){
         console.log('获取table数据')
+        console.log(this.state.tableFilters)
         const {ajaxType,baseUrl,urlType} = this.props.optionData
         // React[ajaxType || '$ajaxGet'](baseUrl,this.state.tableFilters,urlType || 3).then(res => {
         //    console.log(res);
