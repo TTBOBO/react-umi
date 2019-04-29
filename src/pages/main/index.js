@@ -58,10 +58,18 @@ export default class index extends Component {
               }
         ]
     }
-    textRender = ({record,index}) => {
-        return (
-            <span style={{color:"red"}}>{record.name}{index}</span>
-        )
+    textRender = ({record,index,text}) => {
+        let obj = {
+            children:<span style={{color:"red"}}>{record.name}</span>,
+            props:{}
+        }
+        if(index === 0){
+            obj.props.rowSpan = 2;
+        }
+        if(index === 1){
+            obj.props.rowSpan = 0;
+        }
+        return obj
     }
     // textRender = ({record}) => (<span style={{color:"red"}}>{record.name}{index}</span>)
     renderHeader = (props) => {
@@ -99,8 +107,8 @@ export default class index extends Component {
                         
                     // ]
                 },
-                    {title: '年龄',prop: 'age',sort:true,defaultSortOrder:'descend',resize:false},
-                        {title: '住址',prop: 'address',search:"name",type:""},
+                    {title: '年龄',prop: 'age',colSpan:2,sort:true,defaultSortOrder:'descend',resize:false},
+                        {title: '住址',prop: 'address',search:"name",type:"",colSpan:0},
                     {title: 'key',prop: 'key',search:"key",value:'2',type:"select",selectOption: {1:"测试1",2:"测试2"},
                         // optionUrl:"qsm_ceph",dataType:5,urlkey:"ceph",colKey:"value",colName:"name",selectPar:{user:"chainyang",type:"project",size:"200"}
                         }

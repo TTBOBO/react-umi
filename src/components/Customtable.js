@@ -122,6 +122,7 @@ export default class Customtable extends Component {
                         className={item.className}
                         dataIndex={item.prop} 
                         resize={item.resize}
+                        colSpan={item.colSpan || 1}
                         key={item.prop}
                         sorter={item.sort  || null}
                         defaultSortOrder={item.defaultSortOrder || null}
