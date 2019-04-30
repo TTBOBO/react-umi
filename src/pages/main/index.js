@@ -63,12 +63,12 @@ export default class index extends Component {
             children:<span style={{color:"red"}}>{record.name}</span>,
             props:{}
         }
-        if(index === 0){
-            obj.props.rowSpan = 2;
-        }
-        if(index === 1){
-            obj.props.rowSpan = 0;
-        }
+        // if(index === 0){
+        //     obj.props.rowSpan = 2;
+        // }
+        // if(index === 1){
+        //     obj.props.rowSpan = 0;
+        // }
         return obj
     }
     // textRender = ({record}) => (<span style={{color:"red"}}>{record.name}{index}</span>)
