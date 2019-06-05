@@ -1,0 +1,1 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[2],{"4Daz":function(e,a,n){"use strict";n.r(a);var t=n("q1tI"),u=n.n(t);a["default"]=(()=>{return u.a.createElement("div",null,"I am a customized 404 page")})}}]);

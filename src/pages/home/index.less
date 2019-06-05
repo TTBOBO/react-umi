@@ -1,0 +1,28 @@
+.logo {
+    height: 32px;
+    background: rgba(255,255,255,.2);
+    margin: 16px;
+}
+.header{
+    background: #fff;
+    .content{
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+        align-items: center;
+        .userCon{
+            cursor: pointer;
+            .username{
+                margin-left: 20px;
+            }
+        }
+    }
+}
+
+.slider{
+    overflow: 'auto' !important;
+    height: '100vh' !important;
+    &::-webkit-scrollbar {
+        display: none; //Safari and Chrome
+    }
+}
