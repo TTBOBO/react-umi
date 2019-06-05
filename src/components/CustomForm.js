@@ -14,7 +14,6 @@ class CustomForm extends Component {
         await this.initvalidata();
     }
     async initvalidata(){
-        
         const {formList = [],validata = {}} = this.props.formOption;
         this.setState({
             validata:util.initValidate({
@@ -115,73 +114,6 @@ class CustomForm extends Component {
             this.props['On'+item.field](val);
         }
     }
-
-    // getFormItemCon1(item = {}){
-    //     let inputTypes = ['input','password'];
-    //     let obj = JSON.parse(JSON.stringify(item))
-    //     const {type,icon,allPla,pla,label,disable,suffix,formatter,parser,field,neText,disabled,mode,group,uncheckText,checkText,dateType,size,showTime,format} = obj;
-    //     if(inputTypes.indexOf(type) != -1 || type){
-    //         return (<Input prefix={icon || ""}  onChange={this.changeNum.bind(this,item)} type={type} placeholder={allPla || (pla || `请输入${label}`)} disabled={disable} allowClear  suffix={this.getSuffix(suffix)} addonBefore={this.getBefore(item)}  addonAfter={this.getAfter(item)} />)
-    //     }else if(type === 'number'){
-    //         return ( <InputNumber onChange={this.changeNum.bind(this,item)} formatter={formatter} disabled={disable} parser={parser} />)
-    //     }else if(type === 'select'){
-    //         const {selectData} = this.state;
-    //         const Option = Select.Option;
-    //         return (
-    //             <Select style={{ width: 120 }} onChange={this.changeNum.bind(this,item)} showArrow notFoundContent={neText} filterOption={this.filterOption} showSearch allowClear autoClearSearchValue  disabled={disable} mode={mode || ''} placeholder={allPla || (pla || `请选择${label}`)}>
-    //                {selectData[field] && selectData[field].map(_item => <Option key={_item.value} value={_item.value}>{_item.label}</Option>)}
-    //             </Select>
-    //         )
-    //     }else if(type === 'radio'){
-    //         const {selectData} = this.state;
-    //         const RadioGroup = Radio.Group;
-    //         return (
-    //             // selectData[field] ? (group ? <RadioGroup onChange={this.changeNum.bind(this,item)}>
-    //             //     {selectData[field].map(_item => <Radio  key={_item.value} value={_item.value}>{_item.label}</Radio>)}
-    //             // </RadioGroup> : <Radio disabled={disabled}>{selectData[field][0].label}</Radio>) : <span></span>
-    //              selectData[item.field] ? (item.group ? <RadioGroup onChange={this.changeNum.bind(this,item)}>
-    //              {selectData[item.field].map(item => <Radio key={item.value} value={item.value}>{item.label}</Radio>)}
-    //          </RadioGroup> : <Radio disabled={item.disabled}>{selectData[item.field][0].label}</Radio>) : <span></span>
-    //         )
-    //     }else if(type === 'checkbox'){
-    //         const CheckboxGroup = Checkbox.Group;
-    //         const {selectData} = this.state;
-    //         return (
-    //             selectData[field] ?  (group ? <CheckboxGroup options={ selectData[field]} onChange={this.changeNum.bind(this,item)}/> :  <Checkbox  onChange={this.changeNum.bind(this,item)}  disabled={disabled}>{selectData[field][0].label} </Checkbox>) : <span></span>
-    //         )
-    //     }else if(type === 'switch'){
-    //         return ( <Switch onChange={this.changeNum.bind(this,item)} checkedChildren={checkText || "开"} unCheckedChildren={uncheckText || "关"} />)
-    //     }else if(type === 'date'){
-    //         const DateType = dateType || 'date';
-    //         let DateCom = null;
-    //         const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
-    //         let obj = {
-    //             placeholder:allPla || (pla || `请选择${label}`),
-    //             size:size || 'small',
-    //             disabled:disabled || false,
-    //             showTime:showTime || false,
-    //             format:format || null,
-    //             onChange:this.changeNum.bind(this,item)
-    //         }
-    //         switch (DateType){
-    //             case 'date': 
-    //                 DateCom = <DatePicker {...obj}  />;
-    //                 break;
-    //             case 'month': 
-    //                 DateCom = <MonthPicker {...obj} />;
-    //                 break;
-    //             case 'range': 
-    //                 DateCom = <RangePicker {...obj} />;
-    //                 break;
-    //             case 'week': 
-    //                 DateCom = <WeekPicker {...obj} />;
-    //                 break;
-    //             default: 
-    //                 DateCom = <DatePicker {...obj} />;
-    //         }
-    //         return (DateCom)
-    //     }
-    // }
 
     getFormItemCon(item = {}){
         let inputTypes = ['input','password'];
