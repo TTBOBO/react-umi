@@ -1,1 +1,0 @@
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([[4],{qbRc:function(n,e,t){"use strict";t.r(e);var c=t("q1tI"),i=t.n(c);e["default"]=function(n){return i.a.createElement("div",null,"12313",n.children)}}}]);
